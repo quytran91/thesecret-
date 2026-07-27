@@ -1127,7 +1127,7 @@
 <div id="cele">
   <video id="cele-vid" muted loop playsinline></video>
   <div class="inner">
-    <img id="ce-img" alt="" style="display:none;width:130px;height:130px;object-fit:cover;border-radius:18px;border:3px solid rgba(255,226,122,.9);box-shadow:0 0 36px rgba(255,215,0,.5);margin:0 auto 14px;animation:glow 1.2s ease-in-out infinite alternate">
+    <img id="ce-img" alt="" style="display:none;width:min(64vw,340px);height:min(64vw,340px);object-fit:cover;border-radius:26px;border:4px solid rgba(255,226,122,.95);box-shadow:0 0 60px rgba(255,215,0,.65), 0 16px 50px rgba(0,0,0,.45);margin:0 auto 16px;animation:glow 1.2s ease-in-out infinite alternate">
     <h1 id="ce-t"></h1>
     <div class="sub" id="ce-s"></div>
     <div class="nt" id="ce-n"></div>
@@ -11852,8 +11852,26 @@ async function renderMarket(){
       celebrate('✦ MANIFEST THÀNH CÔNG! ✦',d.name+' đã là hiện thực!',price?('Vũ Trụ đã trao nó cho '+(D.name||'bạn')+' — hãy cảm nhận nó là của mình'):'Món quà vô giá từ Vũ Trụ',13,iu);
     };
     card.appendChild(ph);card.appendChild(nm);card.appendChild(pr);card.appendChild(bt);
+    // bấm vào card (không phải nút MANIFEST) → sống lại cảm xúc "nó đang đến"
+    card.style.cursor='pointer';
+    card.addEventListener('click',(e)=>{ if(e.target.tagName!=='BUTTON') reliveDesire(idx); });
     g.appendChild(card);
   }
+}
+/* Sống lại khoảnh khắc manifest — neo lại cảm xúc */
+async function reliveDesire(idx){
+  const d=D.desires[idx]; if(!d) return;
+  const iu = d.imgId ? await blobUrl(d.imgId) : null;
+  const fn = firstName();
+  if(d.done){
+    celebrate('🎉 ĐÃ MANIFESTED! 🎉', d.name, 'Bạn đã hiện thực hóa điều này rồi, '+fn+'! Cảm nhận lại niềm vui ấy — Vũ Trụ luôn chiều lòng bạn 💛', 12, iu);
+  } else {
+    celebrate('✨ ĐANG THÀNH HIỆN THỰC ✨', d.name, 'Vũ Trụ đã chuẩn bị xong món quà này — hãy cảm nhận như nó ĐÃ là của '+fn+' ngay lúc này 💛', 12, iu);
+  }
+}
+async function relivePurchase(p){
+  const iu = p.imgId ? await blobUrl(p.imgId) : null;
+  celebrate('🎉 ĐÃ MANIFESTED! 🎉', p.name, 'Bạn đã hiện thực hóa điều này rồi, '+firstName()+'! Sống lại khoảnh khắc ấy đi 💛', 12, iu);
 }
 function quickBuy(){
   const name=$('q-name').value.trim(), amt=parseMoney($('q-amt').value);
@@ -11865,14 +11883,19 @@ function quickBuy(){
   showSms(amt,true,name);
   celebrate('✦ MANIFEST THÀNH CÔNG! ✦',name+' đã là hiện thực!','Vũ Trụ đã trao nó cho '+(D.name||'bạn')+' 💛',11);
 }
-function renderShop(){
+async function renderShop(){
   const box=$('shop-list'); box.innerHTML='';
   if(!D.purchases.length) box.innerHTML='<div class="empty">Chưa mua món nào.</div>';
-  [...D.purchases].reverse().slice(0,30).forEach(p=>{
+  for(const p of [...D.purchases].reverse().slice(0,30)){
     const r=document.createElement('div'); r.className='grow-row';
-    r.innerHTML='<div class="thumb">✓</div><div class="g"><div class="t">'+esc(p.name)+'</div><div class="s">'+p.dateVN+'</div></div><span class="amt gold">'+fmt(p.amount)+'</span>';
+    let th='<div class="thumb">✓</div>';
+    if(p.imgId){ const u=await blobUrl(p.imgId); if(u) th='<div class="thumb" style="padding:0;overflow:hidden"><img src="'+u+'" style="width:100%;height:100%;object-fit:cover"></div>'; }
+    r.innerHTML=th+'<div class="g"><div class="t">'+esc(p.name)+'</div><div class="s">'+p.dateVN+'</div></div><span class="amt gold">'+fmt(p.amount)+'</span>';
+    // bấm vào món đã manifest → sống lại khoảnh khắc
+    r.style.cursor='pointer';
+    r.addEventListener('click',()=>relivePurchase(p));
     box.appendChild(r);
-  });
+  }
   $('shop-left').textContent = fmt(bal());
 }
 function renderLedger(){
