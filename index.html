@@ -868,7 +868,8 @@
             <option value="anh">Anh</option><option value="chi">Chị</option><option value="em">Em</option>
             <option value="vo">Vợ</option><option value="chong">Chồng</option>
             <option value="bo">Bố</option><option value="me">Mẹ</option>
-            <option value="bac">Bác / Cô / Chú</option><option value="ban" selected>Bạn bè</option>
+            <option value="bac">Bác</option><option value="chu">Chú</option><option value="co">Cô</option>
+            <option value="ban" selected>Bạn bè</option>
           </select>
           <button class="bglass" onclick="document.getElementById('ct-file').click()">Ảnh</button>
           <input type="file" id="ct-file" accept="image/*" style="display:none">
@@ -1107,7 +1108,8 @@
     <option value="anh">Anh</option><option value="chi">Chị</option><option value="em">Em</option>
     <option value="vo">Vợ</option><option value="chong">Chồng</option>
     <option value="bo">Bố</option><option value="me">Mẹ</option>
-    <option value="bac">Bác / Cô / Chú</option><option value="ban">Bạn bè</option>
+    <option value="bac">Bác</option><option value="chu">Chú</option><option value="co">Cô</option>
+    <option value="ban">Bạn bè</option>
   </select>
   <div class="row" style="margin-bottom:10px">
     <select class="in" id="we-bank" style="flex:1"></select>
@@ -11284,6 +11286,18 @@ function load(){
 }
 function save(){ localStorage.setItem(KEY, JSON.stringify(D)); }
 let D = load();
+// contact cũ để vai "Bác" mà tên là "Chú ..."/"Cô ..." → tự đổi sang vai đúng (một lần)
+(function migrateRel(){
+  let changed = false;
+  (D.contacts || []).forEach(c => {
+    if(c.rel === 'bac'){
+      const n = (c.name || '').trim().toLowerCase();
+      if(n.startsWith('chú') || n.startsWith('chu ')){ c.rel = 'chu'; changed = true; }
+      else if(n.startsWith('cô') || n.startsWith('co ')){ c.rel = 'co'; changed = true; }
+    }
+  });
+  if(changed) save();
+})();
 const $ = id => document.getElementById(id);
 
 /* ================= IndexedDB cho ảnh/video ================= */
@@ -12333,7 +12347,9 @@ function relPreset(rel){
     case 'chong': return {self:'chồng',you:'vợ',uSelf:'vợ',uAddr:'chồng',a:false,uA:false,label:'Chồng'};
     case 'bo':    return {self:'bố',you:'con',uSelf:'con',uAddr:'bố',a:false,uA:true,label:'Bố'};
     case 'me':    return {self:'mẹ',you:'con',uSelf:'con',uAddr:'mẹ',a:false,uA:true,label:'Mẹ'};
-    case 'bac':   return {self:'bác',you:'cháu',uSelf:'cháu',uAddr:'bác',a:false,uA:true,label:'Bác/Cô/Chú'};
+    case 'bac':   return {self:'bác',you:'cháu',uSelf:'cháu',uAddr:'bác',a:false,uA:true,label:'Bác'};
+    case 'chu':   return {self:'chú',you:'cháu',uSelf:'cháu',uAddr:'chú',a:false,uA:true,label:'Chú'};
+    case 'co':    return {self:'cô',you:'cháu',uSelf:'cháu',uAddr:'cô',a:false,uA:true,label:'Cô'};
     default:      return {self:'tớ',you:'cậu',uSelf:'tớ',uAddr:'cậu',a:false,uA:false,label:'Bạn bè'};
   }
 }
