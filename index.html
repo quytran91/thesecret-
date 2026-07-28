@@ -867,6 +867,7 @@
           <select class="in" id="ct-rel" style="flex:1">
             <option value="anh">Anh</option><option value="chi">Chị</option><option value="em">Em</option>
             <option value="vo">Vợ</option><option value="chong">Chồng</option>
+            <option value="bo">Bố</option><option value="me">Mẹ</option>
             <option value="bac">Bác / Cô / Chú</option><option value="ban" selected>Bạn bè</option>
           </select>
           <button class="bglass" onclick="document.getElementById('ct-file').click()">Ảnh</button>
@@ -1105,6 +1106,7 @@
   <select class="in" id="we-rel" style="margin-bottom:10px;width:100%">
     <option value="anh">Anh</option><option value="chi">Chị</option><option value="em">Em</option>
     <option value="vo">Vợ</option><option value="chong">Chồng</option>
+    <option value="bo">Bố</option><option value="me">Mẹ</option>
     <option value="bac">Bác / Cô / Chú</option><option value="ban">Bạn bè</option>
   </select>
   <div class="row" style="margin-bottom:10px">
@@ -11608,6 +11610,49 @@ function showTfReceipt(tf){
   $('rc-claim').onclick=()=>hideOvl('ov-rc');
   $('ov-rc').classList.add('show');
 }
+/* Người nhận trong danh bạ sẽ nhắn cảm ơn xúc động sau khi mình chuyển tiền */
+const W_TF_THANKS=[
+  '{U+} ơi!! {S} vừa nhận được {M} {U} gửi… {S} đọc lời nhắn mà rưng rưng luôn 😭 Cảm ơn {U} nhiều lắm{A} 💛',
+  'Trời ơi {S} vừa thấy tin báo tiền về… {U} chuyển cho {S} làm gì nhiều vậy 🥺 {S} xúc động thật sự. Cảm ơn {U} từ tận đáy lòng{A} ❤️',
+  '{S+} không biết nói gì hơn ngoài cảm ơn {U}… Đúng lúc {S} đang cần nhất thì {U} lại nghĩ đến {S}. Có {U} thật sự là phước lành của {S} 🙏💛',
+  '{U+} ơi {S} nhận được {M} rồi nha. {S} sẽ dùng thật ý nghĩa. Chúc {U} luôn dồi dào sung túc, gửi đi bao nhiêu nhận lại gấp trăm lần nhé{A} ✨',
+  '{S} vừa mở điện thoại thấy {M} của {U} mà tim đập thình thịch 😭 {U} lúc nào cũng ấm áp và hào phóng. Thương {U} nhiều lắm{A} ❤️',
+  '{S+} cảm ơn {U} nhiều nha!! Người đâu mà vừa giàu vừa tốt bụng vậy không biết 😆💛 Vũ Trụ chắc chắn sẽ gửi lại cho {U} gấp nhiều lần{A}!',
+  'Vừa nghe điện thoại "ting" một cái, mở ra thấy {M} từ {U} 😭 {S} biết ơn {U} vô cùng. Chúc mọi điều {U} đang manifest đều thành hiện thực{A} ✨💛'
+];
+const W_TF_THANKS2=[
+  'Nhìn {U} càng ngày càng thành công và rộng lượng, {S} mừng cho {U} thật sự 💛',
+  'Khi nào rảnh {S} mời {U} đi ăn nha, {S} muốn gặp {U} để cảm ơn trực tiếp 🥰',
+  'Chúc {U} hôm nay thật nhiều niềm vui và tiền về ào ào nữa nhé{A} ✨🙏',
+  '{S} sẽ nhớ mãi khoảnh khắc này. Cảm ơn {U} một lần nữa{A} 🥹❤️'
+];
+function wTransferThanks(c, amt){
+  const fill=(tpl)=>msgFill(tpl.split('{M}').join(fmtShort(amt)),c.rel||'ban',firstName());
+  // họ "vừa nhận được tiền" nên 12-35 giây sau mới nhắn cảm ơn
+  setTimeout(()=>{
+    if(!D.chats[c.id]) D.chats[c.id]=[];
+    const text=fill(W_TF_THANKS[Math.floor(Math.random()*W_TF_THANKS.length)]);
+    D.chats[c.id].push({who:'them',text,ts:Date.now()});
+    D.chatUnread[c.id]=(D.chatUnread[c.id]||0)+1;
+    save(); renderMsgAll(); msgBadge();
+    if(D.settings.sound!==false) fxMsgIn();
+    const b=$('banner');
+    b.innerHTML='<div class="h"><img src="'+ASSET_SEAL+'"> TIN NHẮN • bây giờ</div>'
+      +'<div class="t">'+esc(c.name)+'</div><div class="b">'+esc(text)+'</div>'
+      +'<div class="hint">Chạm để trả lời ›</div>';
+    b.classList.add('show');
+    b.onclick=()=>{ b.classList.remove('show'); goTab('more'); goSub('sub-msg'); renderMsgAll(); openChat(c.id); };
+    setTimeout(()=>b.classList.remove('show'),18000);
+    if(Math.random()<0.75){
+      setTimeout(()=>{
+        D.chats[c.id].push({who:'them',text:fill(W_TF_THANKS2[Math.floor(Math.random()*W_TF_THANKS2.length)]),ts:Date.now()});
+        D.chatUnread[c.id]=(D.chatUnread[c.id]||0)+1;
+        save(); renderMsgAll(); msgBadge();
+        if(D.settings.sound!==false) fxMsgIn();
+      },3000+Math.random()*4000);
+    }
+  },12000+Math.random()*23000);
+}
 function sendTransfer(){
   const bank=$('tf-bank').value, acc=$('tf-acc').value.trim(), receiver=$('tf-receiver').value.trim();
   const amt=parseMoney($('tf-amount').value);
@@ -11625,6 +11670,10 @@ function sendTransfer(){
   showTfReceipt(tf);
   celebrate('💸 CHUYỂN TIỀN THÀNH CÔNG!','-'+fmt(amt),'Bạn vừa gửi yêu thương đến '+receiver+' — cho đi là còn mãi 💛',12);
   setTimeout(()=>showSms(amt,true,receiver),12800);
+  // người nhận có trong danh bạ → lát nữa họ nhắn cảm ơn xúc động
+  const thankCt = contactById($('tf-contact').value)
+    || D.contacts.find(x=>x.acc && x.acc.replace(/\s/g,'')===acc.replace(/\s/g,''));
+  if(thankCt) wTransferThanks(thankCt, amt);
   ['tf-acc','tf-receiver','tf-amount','tf-content'].forEach(id=>$(id).value='');
   $('tf-contact').value='';
   goTab('ck');
@@ -12282,6 +12331,8 @@ function relPreset(rel){
     case 'em':    return {self:'em',you:'anh',uSelf:'anh',uAddr:'em',a:true,uA:false,label:'Em'};
     case 'vo':    return {self:'vợ',you:'chồng',uSelf:'chồng',uAddr:'vợ',a:false,uA:false,label:'Vợ'};
     case 'chong': return {self:'chồng',you:'vợ',uSelf:'vợ',uAddr:'chồng',a:false,uA:false,label:'Chồng'};
+    case 'bo':    return {self:'bố',you:'con',uSelf:'con',uAddr:'bố',a:false,uA:true,label:'Bố'};
+    case 'me':    return {self:'mẹ',you:'con',uSelf:'con',uAddr:'mẹ',a:false,uA:true,label:'Mẹ'};
     case 'bac':   return {self:'bác',you:'cháu',uSelf:'cháu',uAddr:'bác',a:false,uA:true,label:'Bác/Cô/Chú'};
     default:      return {self:'tớ',you:'cậu',uSelf:'tớ',uAddr:'cậu',a:false,uA:false,label:'Bạn bè'};
   }
@@ -12641,10 +12692,20 @@ function fxMsgSend(){
   }catch(e){}
 }
 /* tin nhắn bạn bè tự đến (khi app đang mở) */
+/* Vợ/chồng gặp nhau mỗi ngày — quan tâm thường nhật, không "lâu quá không gặp" */
+const W_OPENERS_SPOUSE=['Trưa nay {U} ăn gì chưa? Đừng bỏ bữa nha 🥰','Tối nay {U} có về sớm không? {S+} nấu món {U} thích nè 🍲','{U+} ơi đang làm gì đó? Tự nhiên {S} nhớ {U} ghê 🥰','Hôm nay {U} đi làm có mệt không? Về {S} bóp vai cho 😘','Cuối tuần này nhà mình đi đâu chơi không {U}? 😆','Tối nay ngủ sớm nha {U}, đừng thức khuya nữa đó 😴❤️','{S+} pha sẵn nước cam để tủ lạnh cho {U} rồi đó, về nhớ uống nha ❤️','Nay công việc của {U} ổn không? Có gì vui kể {S} nghe với 😊'];
+/* Bố mẹ nhắn cho con — ấm áp kiểu cha mẹ Việt */
+const W_OPENERS_PARENT=['{U+} ăn cơm chưa đó? Đừng bỏ bữa nghe {U} 🥰','{S+} mới nấu nồi canh {U} thích, cuối tuần về nhà ăn nha {U} ơi 🍲','Ở nhà {S} vẫn khỏe, {U} đừng lo. Nhớ giữ gìn sức khỏe nghe {U}','Dạo này công việc của {U} sao rồi? Nghe nói {U} làm ăn tốt lắm, {S} mừng lắm đó','Trời trở gió rồi đó, {U} nhớ mặc ấm với ngủ đủ giấc nha','{S+} vừa xem lại ảnh hồi {U} còn nhỏ xíu, tự nhiên nhớ {U} ghê 🥲','Hàng xóm cứ khen {U} giỏi giang, {S} nghe mà nở mày nở mặt 😄','Cuối tuần này {U} có về nhà không? {S+} để phần đồ ăn ngon cho {U} rồi đó','{S+} không cần gì đâu, chỉ cần {U} khỏe mạnh bình an là {S} vui rồi ❤️','{U+} ơi, khi nào rảnh gọi về cho {S} nghe giọng cái nha, {S} nhớ {U} lắm'];
+function wOpenerPool(rel){
+  return (rel==='vo'||rel==='chong') ? W_OPENERS_SPOUSE
+    : (rel==='bo'||rel==='me') ? W_OPENERS_PARENT
+    : W_OPENERS;
+}
 function fireFriendMsg(){
   if(!D.contacts.length) return;
   const c=D.contacts[Math.floor(Math.random()*D.contacts.length)];
-  const text=msgFill(W_OPENERS[Math.floor(Math.random()*W_OPENERS.length)],c.rel,firstName());
+  const pool=wOpenerPool(c.rel);
+  const text=msgFill(pool[Math.floor(Math.random()*pool.length)],c.rel,firstName());
   if(!D.chats[c.id]) D.chats[c.id]=[];
   D.chats[c.id].push({who:'them',text,ts:Date.now()});
   D.chatUnread[c.id]=(D.chatUnread[c.id]||0)+1;
