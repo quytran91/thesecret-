@@ -586,6 +586,15 @@
     box-shadow:0 14px 34px rgba(201,255,74,.22), 0 4px 12px rgba(0,0,0,.3);
   }
   .wb-cta:active{transform:scale(.98)}
+
+  /* Mưa trái tim khi lưu ghi chú Lòng biết ơn */
+  .heart-fx{position:fixed;bottom:-40px;pointer-events:none;z-index:97;animation:heartRise var(--dur) ease-out forwards;will-change:transform,opacity}
+  @keyframes heartRise{
+    0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg)}
+    12%{opacity:1}
+    80%{opacity:.95}
+    100%{opacity:0;transform:translate(var(--dx),-108vh) scale(1.15) rotate(var(--rot))}
+  }
 </style>
 
 <!-- ================= HEADER ================= -->
@@ -12025,14 +12034,53 @@ function saveNote(){
   if(editNote>=0){ const n=D.gratitude[editNote]; n.title=title;n.content=content;n.imgIds=[...noteImgIds]; }
   else D.gratitude.push({title,content,imgIds:[...noteImgIds],ts:Date.now(),dateVN:nowVN()});
   save(); renderNotes(); hideOvl('ov-note');
+  heartBurst();
   toast('♡ Đã lưu — Vũ Trụ đang lắng nghe bạn');
+}
+/* Xáo vị trí ổn định theo "khung giờ" — mỗi khung một trật tự mới, cùng khung giữ nguyên */
+function galOrder(n, periodMs){
+  let seed = Math.floor(Date.now() / (periodMs || 3600000));
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const out = Array.from({length: n}, (_, i) => i);
+  for(let i = out.length - 1; i > 0; i--){
+    const j = Math.floor(rnd() * (i + 1));
+    const t = out[i]; out[i] = out[j]; out[j] = t;
+  }
+  return out;
+}
+const GRAT_PERIOD = 25*60*1000; // Lòng biết ơn xáo mỗi 25 phút — ghi chú cũ có lúc trồi lên đầu
+let gratBucket = Math.floor(Date.now() / GRAT_PERIOD);
+setInterval(() => {
+  const b = Math.floor(Date.now() / GRAT_PERIOD);
+  if(b !== gratBucket){ gratBucket = b; renderNotes(); }
+}, 60000);
+/* Mưa trái tim — dùng riêng cho khoảnh khắc ghi nhận lòng biết ơn, kéo dài ~17s */
+function heartBurst(count, seconds){
+  const icons=['💛','❤️','💕','💗','✨'];
+  const n=count||34, secs=seconds||17;
+  const spawnOne=()=>{
+    const h=document.createElement('div');
+    h.className='heart-fx';
+    h.textContent=icons[Math.floor(Math.random()*icons.length)];
+    h.style.left=(4+Math.random()*92)+'vw';
+    h.style.fontSize=(16+Math.random()*22)+'px';
+    h.style.setProperty('--dx',(Math.random()*160-80)+'px');
+    h.style.setProperty('--rot',(Math.random()*60-30)+'deg');
+    const dur=2.4+Math.random()*2;
+    h.style.setProperty('--dur',dur+'s');
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(), dur*1000+400);
+  };
+  for(let i=0;i<n;i++) setTimeout(spawnOne, Math.random()*700);
+  const trickle=setInterval(spawnOne, 260);
+  setTimeout(()=>clearInterval(trickle), secs*1000);
 }
 async function renderNotes(){
   const g=$('note-grid'); g.innerHTML='';
   $('note-empty').style.display=D.gratitude.length?'none':'block';
-  const list=[...D.gratitude].sort((a,b)=>b.ts-a.ts);
-  for(const n of list){
-    const idx=D.gratitude.indexOf(n);
+  // xáo vị trí mỗi 25 phút — ghi chú biết ơn cũ cũng có lúc trồi lên đầu để đọc lại
+  for(const idx of galOrder(D.gratitude.length, GRAT_PERIOD)){
+    const n=D.gratitude[idx];
     const c=document.createElement('div'); c.className='ncard';
     let cov='';
     if(n.imgIds&&n.imgIds.length){ const u=await blobUrl(n.imgIds[0]); if(u) cov='<div class="cov" style="display:block"><img src="'+u+'"></div>'; }
