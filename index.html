@@ -195,13 +195,19 @@
 
   /* ===== MARKET ===== */
   #market{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-  .prod{background:var(--glass);border:1px solid var(--bord);border-radius:18px;overflow:hidden;box-shadow:var(--shadow),var(--hl);display:flex;flex-direction:column}
+  .prod{background:var(--glass);border:1px solid var(--bord);border-radius:18px;overflow:hidden;box-shadow:var(--shadow),var(--hl);display:flex;flex-direction:column;position:relative}
   .prod .ph{height:104px;background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden}
   .prod .ph img{width:100%;height:100%;object-fit:cover}
   .prod .nm{padding:9px 11px 1px;font-size:12px;font-weight:700}
   .prod .pr{padding:0 11px;font-size:11px;color:var(--gold2);font-weight:800}
   .prod button{margin:9px 11px 11px;padding:9px;border:none;border-radius:13px;font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.4px;color:#171204;background:var(--ggrad)}
   .prod button:active{transform:scale(.97)}
+  .prod .mn{
+    position:absolute;top:6px;right:6px;width:24px;height:24px;min-width:24px;margin:0;padding:0;
+    border:none;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:13px;
+    display:flex;align-items:center;justify-content:center;z-index:2;backdrop-filter:blur(6px)
+  }
+  .prod .mn:active{transform:scale(.92)}
 
   /* ===== HERO ===== */
   .hero{
@@ -1089,6 +1095,24 @@
   <div class="macts">
     <button class="bglass" onclick="hideOvl('ov-jour')">Hủy</button>
     <button class="bgold" onclick="saveJournal()">Lưu trang này</button>
+  </div>
+</div></div>
+
+<!-- sửa/xóa yêu cầu Manifest -->
+<div class="ovl" id="ov-d-edit"><div class="sheet">
+  <div class="grab"></div>
+  <h2>Chỉnh sửa yêu cầu</h2>
+  <input class="in" id="de-name" placeholder="Bạn yêu cầu điều gì?" style="margin-bottom:10px">
+  <input class="in" type="text" id="de-price" placeholder="Giá (vd: 2 tỷ rưỡi, 35 triệu...)" style="margin-bottom:10px">
+  <div class="row">
+    <button class="bglass" onclick="document.getElementById('de-file').click()">Đổi ảnh</button>
+    <input type="file" id="de-file" accept="image/*" style="display:none">
+    <span style="font-size:11px;color:var(--t3)" id="de-img-note"></span>
+  </div>
+  <div class="macts">
+    <button class="bglass" style="color:var(--bad)" onclick="deleteDesireWeb()">Xóa</button>
+    <button class="bglass" onclick="hideOvl('ov-d-edit')">Hủy</button>
+    <button class="bgold" onclick="saveDesireEditWeb()">Lưu</button>
   </div>
 </div></div>
 
@@ -11928,12 +11952,52 @@ async function renderMarket(){
       const iu = d.imgId ? await blobUrl(d.imgId) : null;
       celebrate('✦ MANIFEST THÀNH CÔNG! ✦',d.name+' đã là hiện thực!',price?('Vũ Trụ đã trao nó cho '+(D.name||'bạn')+' — hãy cảm nhận nó là của mình'):'Món quà vô giá từ Vũ Trụ',13,iu);
     };
-    card.appendChild(ph);card.appendChild(nm);card.appendChild(pr);card.appendChild(bt);
-    // bấm vào card (không phải nút MANIFEST) → sống lại cảm xúc "nó đang đến"
+    const mn=document.createElement('button'); mn.className='mn'; mn.textContent='⋯'; mn.title='Sửa / Xóa';
+    mn.onclick=(e)=>{ e.stopPropagation(); openDesireEditWeb(idx); };
+    card.appendChild(ph);card.appendChild(nm);card.appendChild(pr);card.appendChild(bt);card.appendChild(mn);
+    // bấm vào card (không phải nút MANIFEST/⋯) → sống lại cảm xúc "nó đang đến"
     card.style.cursor='pointer';
     card.addEventListener('click',(e)=>{ if(e.target.tagName!=='BUTTON') reliveDesire(idx); });
     g.appendChild(card);
   }
+}
+/* Sửa / xóa một yêu cầu Manifest */
+let editingDesireWeb=-1, deEditImgId;
+function openDesireEditWeb(idx){
+  editingDesireWeb=idx; deEditImgId=undefined;
+  const d=D.desires[idx]; if(!d) return;
+  $('de-name').value=d.name;
+  $('de-price').value=d.price?String(d.price):'';
+  $('de-img-note').textContent=d.imgId?'Đang có ảnh — chọn ảnh mới để đổi':'Chưa có ảnh';
+  $('ov-d-edit').classList.add('show');
+}
+$('de-file').addEventListener('change', async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  deEditImgId=newId();
+  await idbPut(deEditImgId,f);
+  $('de-img-note').textContent='✓ Đã chọn ảnh: '+f.name;
+  e.target.value='';
+});
+function saveDesireEditWeb(){
+  const d=D.desires[editingDesireWeb]; if(!d) return;
+  const name=$('de-name').value.trim();
+  if(!name) return toast('Tên món đồ không được để trống');
+  d.name=name;
+  const parsed=parseMoney($('de-price').value);
+  d.price=isNaN(parsed)?0:parsed;
+  if(deEditImgId!==undefined){ if(d.imgId) idbDel(d.imgId); d.imgId=deEditImgId; }
+  save(); renderAll();
+  hideOvl('ov-d-edit');
+  toast('Đã cập nhật yêu cầu');
+}
+function deleteDesireWeb(){
+  const d=D.desires[editingDesireWeb]; if(!d) return;
+  if(!confirm('Xóa yêu cầu "'+d.name+'"?')) return;
+  if(d.imgId) idbDel(d.imgId);
+  D.desires.splice(editingDesireWeb,1);
+  save(); renderAll();
+  hideOvl('ov-d-edit');
+  toast('Đã xóa yêu cầu');
 }
 /* Sống lại khoảnh khắc manifest — neo lại cảm xúc */
 async function reliveDesire(idx){
