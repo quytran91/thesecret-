@@ -188,7 +188,6 @@
   .mlegal{font-size:6.5px;color:#333}
   .mmicr{display:flex;justify-content:space-between;margin-top:3px;font-family:'Courier New',monospace;font-weight:700;letter-spacing:1.5px;font-size:9.5px}
   .mmicr .web{font-family:inherit;font-weight:400;font-size:7px;color:#666;letter-spacing:0}
-  #day-counter{text-align:center;margin-bottom:12px;font-size:10.5px;color:var(--gold);letter-spacing:2px;font-weight:700}
   .stat3{display:flex;justify-content:space-around;text-align:center}
   .stat3 .l{font-size:8.5px;color:var(--t3);letter-spacing:1.5px;font-weight:700}
   .stat3 .v{font-size:15px;font-weight:800;margin-top:5px;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -616,7 +615,6 @@
   <section class="view active" id="v-sec">
     <h2 class="vt">Séc từ Vũ Trụ</h2>
     <p class="vs">Mỗi ngày, Vũ Trụ ký tặng bạn một tấm ngân phiếu sung túc.</p>
-    <div id="day-counter"></div>
     <div class="card">
       <div id="cheque">
         <div class="mtop">
@@ -647,7 +645,6 @@
     <div class="card stat3">
       <div><div class="l">ĐÃ NHẬN</div><div class="v" style="color:var(--gold2)" id="st-r">0 ₫</div></div>
       <div><div class="l">ĐÃ TIÊU</div><div class="v" id="st-s">0 ₫</div></div>
-      <div><div class="l">SỐ NGÀY</div><div class="v" style="color:var(--ok)" id="st-d">0</div></div>
     </div>
   </section>
 
@@ -11881,7 +11878,6 @@ function renderCheck(){
   $('c-date').textContent = ' '+todayVN()+' ';
   $('c-amt').textContent = fmt(amt);
   $('c-words').textContent = docTien(amt);
-  $('day-counter').textContent = '✦ NGÀY THỰC HÀNH THỨ '+(done?D.checks.length:n)+' ✦';
   $('btn-claim').disabled = done;
   $('btn-claim').textContent = done?'ĐÃ NHẬN SÉC HÔM NAY ✓':'NHẬN SÉC VÀO TÀI KHOẢN';
   $('claim-note').textContent = done?'Tuyệt vời! Sang tab MANIFEST! biến số tiền này thành ước mơ — séc mới đến vào ngày mai.':'Chào '+(D.name||'bạn')+', Vũ Trụ vừa ký tấm séc hôm nay cho bạn!';
@@ -11889,7 +11885,6 @@ function renderCheck(){
   const stShort = n => n >= 1e6 ? fmtShort(n) : fmt(n);
   $('st-r').textContent = stShort(totalR());
   $('st-s').textContent = stShort(D.purchases.reduce((s,p)=>s+p.amount,0));
-  $('st-d').textContent = D.checks.length;
 }
 $('btn-claim').addEventListener('click',()=>{
   if(D.checks.some(c=>c.date===today())) return;
