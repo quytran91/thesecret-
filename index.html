@@ -341,10 +341,15 @@
   }
   #cele .nt{color:#bfe8d8;font-size:12.5px;margin-top:10px}
   #fw{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:95}
+  /* Ảnh trang trí: mặc định ẨN, chỉ hiện khi ảnh tải THÀNH CÔNG (class .ok).
+     Trước đây cái khung viền vàng vẫn vẽ ra dù ảnh thiếu → giữa màn ăn mừng
+     hiện hai ô rỗng có dấu "?", xấu hơn nhiều so với việc không có gì. */
   .cgif{
+    display:none;
     position:fixed;z-index:94;border-radius:14px;border:3px solid rgba(255,226,122,.85);
     box-shadow:0 8px 30px rgba(0,0,0,.5);animation:wob 1.4s ease-in-out infinite;
   }
+  .cgif.ok{display:block}
   @keyframes wob{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-8px)}}
   .rain{position:fixed;top:-40px;font-size:23px;z-index:93;animation:rd linear forwards;pointer-events:none}
   @keyframes rd{to{transform:translateY(110vh) rotate(240deg)}}
@@ -1185,18 +1190,29 @@ const ASSET_SEAL = 'assets/logo-seal.png';
 const ASSET_KACHING = 'assets/kaching.mp3';
 const ASSET_COUNTER = 'assets/counter.gif';
 const ASSET_EMOJI = 'assets/emoji-sheet.png';
-document.getElementById('hdr-logo').src = ASSET_SEAL;
-document.getElementById('cg-2').src = ASSET_COUNTER;
+
+/* Ảnh trang trí chỉ được hiện khi tải XONG và THÀNH CÔNG.
+   File thiếu hay mạng hỏng thì nó im lặng biến mất, chứ không để lại khung rỗng dấu "?". */
+function imgWhenLoaded(el, src){
+  if(!el) return;
+  el.classList.remove('ok');
+  el.style.visibility = 'hidden';
+  el.onload = () => { el.classList.add('ok'); el.style.visibility = 'visible'; };
+  el.onerror = () => { el.classList.remove('ok'); el.style.visibility = 'hidden'; el.removeAttribute('src'); };
+  el.src = src;
+}
+imgWhenLoaded(document.getElementById('hdr-logo'), ASSET_SEAL);
+imgWhenLoaded(document.getElementById('cg-2'), ASSET_COUNTER);
 
 /* video mưa tiền + GIF nhảy múa + GIF hộp quà (tổng ~6,5 MB) — chỉ tải lúc THẬT SỰ cần:
    lúc ăn mừng / lúc mở hộp quà. Mở app lần đầu không đụng tới chúng. */
 let _uRain, _uDance, _uGiftgirl;
 function lazyCelebrationAssets(){
   if(!_uRain){ _uRain = 'assets/moneyrain.mp4'; const v=document.getElementById('cele-vid'); v.src=_uRain; v.load(); }
-  if(!_uDance){ _uDance = 'assets/dance1.gif'; document.getElementById('cg-1').src = _uDance; }
+  if(!_uDance){ _uDance = 'assets/dance1.gif'; imgWhenLoaded(document.getElementById('cg-1'), _uDance); }
 }
 function lazyGiftAsset(){
-  if(!_uGiftgirl){ _uGiftgirl = 'assets/giftgirl.gif'; const g=document.getElementById('gbox-img'); if(g) g.src=_uGiftgirl; }
+  if(!_uGiftgirl){ _uGiftgirl = 'assets/giftgirl.gif'; imgWhenLoaded(document.getElementById('gbox-img'), _uGiftgirl); }
 }
 /* thư viện đọc mã QR (~250KB) — chỉ tải lúc bấm quét ảnh.
    Tải qua thẻ <script src> là BẤT ĐỒNG BỘ, nên trả về Promise và bắt nơi gọi phải chờ,
