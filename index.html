@@ -994,6 +994,9 @@
         </select>
         <button type="button" class="wbf-ic" onclick="wbScanToTf()" title="Quét ảnh mã QR">▣</button>
       </div>
+      <!-- Ai chưa có số TK thì bị lọc khỏi danh sách trên. Trước đây app giấu im lặng,
+           người dùng tưởng bị giới hạn số lượng danh bạ — giờ nói thẳng ra. -->
+      <div id="tf-ct-missing" style="display:none;margin-top:8px;font-size:12px;color:var(--gold2);cursor:pointer"></div>
     </div>
     <div class="wbf"><label>Ngân hàng nhận</label><select id="tf-bank"></select></div>
     <div class="wbf"><label>Tài khoản/thẻ nhận</label><input type="text" id="tf-acc" placeholder="Nhập số tài khoản hoặc số thẻ"></div>
@@ -1380,7 +1383,7 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.8.0';
+const APP_VER = '6.8.1';
 function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal(); }
 function totalR(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0); }
 function bankTheme(b){
@@ -1555,6 +1558,16 @@ function renderTfContacts(){
     s.appendChild(o);
   });
   s.value=cur;
+  // nói rõ vì sao có người trong danh bạ mà không thấy ở đây
+  const miss=D.contacts.filter(c=>!(c.bank&&c.acc));
+  const n=$('tf-ct-missing'); if(!n) return;
+  if(!miss.length){ n.style.display='none'; return; }
+  const ten=miss.slice(0,3).map(c=>c.name).join(', ')+(miss.length>3?'…':'');
+  n.style.display='block';
+  n.textContent='ℹ️ '+miss.length+' người trong danh bạ chưa có số tài khoản nên chưa hiện ở đây ('+ten+'). Bấm để điền.';
+  // mở thẳng ô sửa ngay tại màn hình chuyển tiền — lưu xong saveCtEdit gọi lại hàm này
+  // nên danh sách tự cập nhật, khỏi phải đi vòng sang tab khác rồi quay lại
+  n.onclick=()=>openCtEdit(D.contacts.indexOf(miss[0]));
 }
 function fillFromContact(){
   const c=contactById($('tf-contact').value); if(!c) return;
@@ -1684,10 +1697,36 @@ function fwSound(total){
   while(t<total-2){ boom(t,Math.random()<0.45); t+=0.6+Math.random()*0.7; }
   boom(total-1.6,true); boom(total-1,true); boom(total-0.5,true);
 }
+/* Tiếng két tiền phát qua Web Audio thay vì thẻ <audio>.
+   iPhone hễ thấy thẻ <audio> phát tiếng là dựng thanh điều khiển nhạc lên MÀN HÌNH KHOÁ,
+   nhìn cứ như app đang chạy nền — dễ làm người dùng hoảng rồi trượt tắt vì sợ mất dữ liệu.
+   Web Audio phát đúng tiếng đó nhưng không tạo phiên "Đang phát" nào cả.
+   Dùng chung ctx() với pháo hoa nên đã được mở khoá sẵn bằng thao tác chạm của người dùng. */
+let _kBuf=null, _kLoad=null;
+function loadKaching(){
+  if(_kBuf) return Promise.resolve(_kBuf);
+  if(!_kLoad) _kLoad = fetch(ASSET_KACHING)
+    .then(r=>r.arrayBuffer())
+    // dạng callback cho Safari đời cũ — decodeAudioData ở đó chưa trả về Promise
+    .then(b=>new Promise((res,rej)=>ctx().decodeAudioData(b,res,rej)))
+    .then(b=>{ _kBuf=b; return b; })
+    .catch(()=>null);
+  return _kLoad;
+}
 function kaching(times){
-  for(let i=0;i<(times||1);i++){
-    setTimeout(()=>{ try{ const a=new Audio(ASSET_KACHING); a.volume=1; a.play().catch(()=>{}); }catch(e){} }, i*1500);
-  }
+  const n=times||1;
+  loadKaching().then(buf=>{
+    if(!buf) return; // thiếu file thì im lặng, không làm hỏng màn ăn mừng
+    for(let i=0;i<n;i++){
+      setTimeout(()=>{ try{
+        const c=ctx();
+        const s=c.createBufferSource(); s.buffer=buf;
+        const g=c.createGain(); g.gain.value=1;
+        s.connect(g).connect(c.destination);
+        s.start();
+      }catch(e){} }, i*1500);
+    }
+  });
 }
 function celeSound(total){ kaching(3); fwSound(total); setTimeout(()=>kaching(2), total*450); }
 function bell(){
