@@ -820,6 +820,7 @@
 
   <!-- ===== XỔ SỐ VŨ TRỤ ===== -->
   <section class="view" id="v-lotto">
+    <button class="back" onclick="goTab('more')">‹ Quay lại</button>
     <h2 class="vt">Xổ Số Vũ Trụ</h2>
     <p class="vs">Chọn 6 con số của bạn. Vũ Trụ lo phần còn lại.</p>
 
@@ -903,6 +904,7 @@
       <div class="menu-item" onclick="goSub('sub-msg');renderMsgAll()"><span class="ic">💬</span> Tin nhắn <span id="msg-badge" style="display:none;min-width:18px;height:18px;border-radius:9px;background:#ff453a;color:#fff;font-size:10.5px;font-weight:700;text-align:center;line-height:18px;padding:0 5px"></span> <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('v-write')"><span class="ic">✎</span> Viết — Biết ơn &amp; Nhật ký <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-ledger')"><span class="ic">◆</span> Tiền đã manifest <span class="ar">›</span></div>
+      <div class="menu-item" onclick="goSub('v-lotto');renderLotto()"><span class="ic">🎟</span> Xổ Số Vũ Trụ <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-life')"><span class="ic">▣</span> Cuộc sống của tôi <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-set')"><span class="ic">⚙</span> Cài đặt & Thông tin <span class="ar">›</span></div>
     </div>
@@ -1098,7 +1100,6 @@
 <nav id="tabs">
   <button class="on" data-tab="sec"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m2 7 10 6L22 7"/></svg>Séc</button>
   <button data-tab="shop"><svg viewBox="0 0 24 24"><path d="M12 3v2M5.6 5.6l1.4 1.4M3 12h2M5.6 18.4l1.4-1.4M12 19v2M18.4 18.4l-1.4-1.4M19 12h2M18.4 5.6l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>Manifest</button>
-  <button data-tab="lotto"><svg viewBox="0 0 24 24"><path d="M3 8V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a2 2 0 0 0 0 4v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a2 2 0 0 0 0-4Z"/><path d="M10 5v2M10 11v2M10 17v2"/></svg>Xổ số</button>
   <button data-tab="ck"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M4 18V10M8 18V10M12 18V10M16 18V10M20 18V10"/><path d="m2 10 10-7 10 7Z"/></svg>Ngân hàng</button>
   <button data-tab="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Thêm</button>
 </nav>
@@ -1437,7 +1438,7 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.9.0';
+const APP_VER = '6.9.2';
 function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal(); }
 function totalR(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0); }
 function bankTheme(b){
