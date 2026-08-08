@@ -192,6 +192,76 @@
   .stat3 .l{font-size:8.5px;color:var(--t3);letter-spacing:1.5px;font-weight:700}
   .stat3 .v{font-size:15px;font-weight:800;margin-top:5px;font-variant-numeric:tabular-nums;white-space:nowrap}
 
+  /* ===== XỔ SỐ VŨ TRỤ ===== */
+  .jp{
+    text-align:center;padding:20px 16px 18px;border-radius:22px;position:relative;overflow:hidden;
+    background:linear-gradient(160deg,rgba(215,181,109,.20),rgba(215,181,109,.05) 60%,transparent);
+    border:1px solid rgba(215,181,109,.45);box-shadow:0 0 34px rgba(215,181,109,.16) inset;
+  }
+  .jp::after{
+    content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent);
+    animation:shine 4.5s ease-in-out infinite;
+  }
+  @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
+  .jp .lb{font-size:9.5px;letter-spacing:2.4px;color:var(--t3);font-weight:700}
+  .jp .amt{font-size:31px;font-weight:800;color:var(--gold2);margin-top:7px;letter-spacing:.5px;
+    text-shadow:0 0 26px rgba(215,181,109,.5);font-variant-numeric:tabular-nums}
+  .jp .sub{font-size:11.5px;color:var(--t2);margin-top:6px}
+  /* lưới 55 số */
+  #lt-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:12px}
+  .lnum{
+    aspect-ratio:1;border-radius:50%;border:1px solid var(--bord);background:rgba(255,255,255,.04);
+    color:var(--t1);font-size:13px;font-weight:700;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    font-variant-numeric:tabular-nums;transition:transform .12s,background .15s;
+  }
+  .lnum:active{transform:scale(.88)}
+  .lnum.pick{background:var(--ggrad);color:#171204;border-color:transparent;box-shadow:0 0 14px rgba(215,181,109,.5)}
+  /* tấm vé */
+  .tick{
+    background:linear-gradient(168deg,#fdf8ec,#f3e6c8);color:#2b2415;border-radius:16px;
+    padding:15px 16px 13px;position:relative;box-shadow:0 12px 34px rgba(0,0,0,.45);
+    font-family:'Segoe UI',system-ui,sans-serif;
+  }
+  .tick::before,.tick::after{content:'';position:absolute;width:19px;height:19px;border-radius:50%;
+    background:var(--bg);top:50%;transform:translateY(-50%)}
+  .tick::before{left:-10px} .tick::after{right:-10px}
+  .tick .th{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1.5px dashed rgba(43,36,21,.28);padding-bottom:8px}
+  .tick .bn{font-size:13.5px;font-weight:800;letter-spacing:.6px}
+  .tick .gm{font-size:10px;letter-spacing:1.6px;color:#7a6a44;font-weight:700}
+  .tick .balls{display:flex;gap:8px;justify-content:center;margin:14px 0 10px;flex-wrap:wrap}
+  .tick .b{
+    width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid #cbb888;
+    display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;
+    font-variant-numeric:tabular-nums;transition:all .35s;
+  }
+  .tick .b.hit{background:linear-gradient(160deg,#f7d97a,#d4a843);border-color:#b98f2c;color:#241c07;
+    transform:scale(1.14);box-shadow:0 0 18px rgba(215,168,67,.85)}
+  .tick .meta{display:flex;justify-content:space-between;font-size:9.5px;color:#7a6a44;
+    border-top:1.5px dashed rgba(43,36,21,.28);padding-top:8px;letter-spacing:.3px}
+  .tick .bar{display:flex;gap:1.5px;justify-content:center;margin-top:9px;height:22px;align-items:flex-end}
+  .tick .bar i{background:#2b2415;width:2px;display:block}
+  /* lồng cầu quay */
+  #lt-draw{text-align:center;padding:6px 0 2px}
+  #lt-drum{
+    width:96px;height:96px;margin:0 auto 12px;border-radius:50%;position:relative;
+    background:radial-gradient(circle at 34% 30%,rgba(242,210,139,.30),rgba(215,181,109,.06) 72%);
+    border:2px solid rgba(215,181,109,.55);display:flex;align-items:center;justify-content:center;
+    font-size:38px;box-shadow:0 0 40px rgba(215,181,109,.3);
+  }
+  #lt-drum.spin{animation:drum 1.1s linear infinite}
+  @keyframes drum{to{transform:rotate(360deg)}}
+  #lt-out{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;min-height:44px;margin-top:4px}
+  .oball{
+    width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;
+    background:linear-gradient(160deg,#f7d97a,#d4a843);color:#241c07;border:2px solid #b98f2c;
+    box-shadow:0 0 20px rgba(215,168,67,.7);animation:drop .5s cubic-bezier(.2,1.5,.4,1);
+  }
+  @keyframes drop{from{opacity:0;transform:translateY(-26px) scale(.4)}to{opacity:1;transform:none}}
+
   /* ===== MARKET ===== */
   #market{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
   .prod{background:var(--glass);border:1px solid var(--bord);border-radius:18px;overflow:hidden;box-shadow:var(--shadow),var(--hl);display:flex;flex-direction:column;position:relative}
@@ -355,20 +425,7 @@
   @keyframes rd{to{transform:translateY(110vh) rotate(240deg)}}
 
   /* ===== AWARE ===== */
-  #aw-breath{width:104px;height:104px;margin:4px auto 18px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
-  #aw-breath::before{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid rgba(215,181,109,.5);animation:br 5s ease-in-out infinite}
-  @keyframes br{0%,100%{transform:scale(.75);opacity:.9}50%{transform:scale(1.15);opacity:.25}}
-  #aw-breath .core{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(242,210,139,.4),rgba(215,181,109,.12) 70%);border:1px solid rgba(215,181,109,.4);display:flex;align-items:center;justify-content:center;font-size:28px;animation:cb 5s ease-in-out infinite}
   @keyframes cb{0%,100%{transform:scale(.95)}50%{transform:scale(1.08)}}
-  .hline{
-    font-size:16.5px;font-weight:700;letter-spacing:.3px;text-align:center;
-    background:linear-gradient(180deg,#fff5d6,#f2d28b 60%,#d7b56d);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 12px rgba(215,181,109,.35));
-    opacity:0;transform:translateY(8px);transition:opacity 1.4s ease,transform 1.4s ease;
-  }
-  .hline.show{opacity:1;transform:none}
-  #aw-face{width:130px;height:130px;margin:4px auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:64px;background:radial-gradient(circle at 40% 32%,rgba(242,210,139,.35),rgba(215,181,109,.08) 72%);border:1px solid rgba(215,181,109,.45);box-shadow:0 0 46px rgba(215,181,109,.35);animation:cb 6s ease-in-out infinite}
 
   #toastmsg{
     position:fixed;bottom:calc(var(--sab) + 92px);left:50%;transform:translateX(-50%) translateY(60px);
@@ -761,6 +818,61 @@
     </div>
   </section>
 
+  <!-- ===== XỔ SỐ VŨ TRỤ ===== -->
+  <section class="view" id="v-lotto">
+    <h2 class="vt">Xổ Số Vũ Trụ</h2>
+    <p class="vs">Chọn 6 con số của bạn. Vũ Trụ lo phần còn lại.</p>
+
+    <div class="jp">
+      <div class="lb">GIẢI JACKPOT KỲ NÀY</div>
+      <div class="amt" id="lt-jp">0 ₫</div>
+      <div class="sub" id="lt-jp-sub"></div>
+    </div>
+
+    <!-- BƯỚC 1: chọn số -->
+    <div class="card" id="lt-pick" style="margin-top:14px">
+      <div class="sh">Chọn 6 con số may mắn <span id="lt-cnt" style="color:var(--gold2);font-weight:800">0/6</span></div>
+      <div id="lt-grid"></div>
+      <div class="row" style="margin-top:13px">
+        <button class="bglass" style="flex:1" onclick="ltQuick()">⚡ Chọn nhanh</button>
+        <button class="bglass" style="flex:1" onclick="ltClear()">Xoá hết</button>
+      </div>
+      <button class="bgold" style="width:100%;margin-top:10px" id="lt-buy" onclick="ltBuy()">MUA VÉ — 10.000 ₫</button>
+      <p class="note" style="margin-top:9px">Giá vé trừ vào số dư, y như mua ngoài đại lý.</p>
+    </div>
+
+    <!-- BƯỚC 2: tấm vé + quay số -->
+    <div id="lt-has" style="display:none;margin-top:14px">
+      <div class="tick" id="lt-ticket">
+        <div class="th">
+          <div><div class="bn">XỔ SỐ VŨ TRỤ</div><div class="gm">JACKPOT 6/55</div></div>
+          <div style="text-align:right"><div class="gm">KỲ QUAY</div><div class="bn" id="lt-kynum">—</div></div>
+        </div>
+        <div class="balls" id="lt-balls"></div>
+        <div class="meta">
+          <span id="lt-meta-l">—</span><span id="lt-meta-r">10.000 ₫</span>
+        </div>
+        <div class="bar" id="lt-bar"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div id="lt-draw">
+          <div id="lt-drum">🎱</div>
+          <div id="lt-out"></div>
+          <p class="note" id="lt-status" style="margin-top:10px">Vé của bạn đã sẵn sàng. Bấm quay số nhé!</p>
+        </div>
+        <button class="bgold" style="width:100%;margin-top:12px" id="lt-go" onclick="ltDraw()">QUAY SỐ 🎰</button>
+      </div>
+    </div>
+
+    <!-- lịch sử -->
+    <div class="card" style="margin-top:14px">
+      <div class="sh">Vé đã mua</div>
+      <div id="lt-hist"></div>
+      <div class="tot"><span>Tổng tiền trúng</span><span id="lt-won" style="color:var(--gold2)">0 ₫</span></div>
+    </div>
+  </section>
+
   <!-- ===== VIẾT ===== -->
   <section class="view" id="v-write">
     <button class="back" onclick="goTab('more')">‹ Quay lại</button>
@@ -792,8 +904,6 @@
       <div class="menu-item" onclick="goSub('v-write')"><span class="ic">✎</span> Viết — Biết ơn &amp; Nhật ký <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-ledger')"><span class="ic">◆</span> Tiền đã manifest <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-life')"><span class="ic">▣</span> Cuộc sống của tôi <span class="ar">›</span></div>
-      <div class="menu-item" onclick="goSub('sub-affirm')"><span class="ic">☀</span> Khẳng định <span class="ar">›</span></div>
-      <div class="menu-item" onclick="goSub('sub-give')"><span class="ic">♥</span> Cho đi <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-set')"><span class="ic">⚙</span> Cài đặt & Thông tin <span class="ar">›</span></div>
     </div>
     <p class="note">The Secret: Tự do tài chính — bản web cho iPhone<br>Dữ liệu lưu ngay trên máy bạn, riêng tư tuyệt đối</p>
@@ -820,35 +930,6 @@
   </section>
 
   <!-- ===== SUB: AFFIRM ===== -->
-  <section class="view" id="sub-affirm">
-    <button class="back" onclick="goTab('more')">‹ Quay lại</button>
-    <h2 class="vt">Khẳng định</h2>
-    <p class="vs">Đọc to lên, chậm rãi, và cảm nhận từng lời.</p>
-    <div class="quote" id="aff-text"></div>
-    <div style="text-align:center;margin-top:14px"><button class="bgold" onclick="nextAff()">Khẳng định tiếp theo ✦</button></div>
-    <div class="card" style="margin-top:16px">
-      <div class="row"><input class="in" id="aff-new" placeholder="Viết lời khẳng định của bạn..."><button class="bglass" onclick="addAff()">Thêm</button></div>
-      <div id="aff-list" style="margin-top:8px"></div>
-    </div>
-  </section>
-
-  <!-- ===== SUB: GIVE ===== -->
-  <section class="view" id="sub-give">
-    <button class="back" onclick="goTab('more')">‹ Quay lại</button>
-    <h2 class="vt">Cho đi</h2>
-    <p class="vs">Cho đi là cách nhanh nhất để nói với Vũ Trụ: "Tôi đang đủ đầy."</p>
-    <div class="card">
-      <input class="in" id="g-name" placeholder="Bạn đã cho đi điều gì?" style="margin-bottom:9px">
-      <div class="row">
-        <input class="in" id="g-amt" type="text" placeholder="Số tiền (vd: 2 tỷ rưỡi, 500k)">
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)"><input type="checkbox" id="g-pl" style="accent-color:var(--gold)">Vô giá</label>
-        <button class="bgold" onclick="addGive()">Ghi</button>
-      </div>
-      <div id="give-list" style="margin-top:8px"></div>
-      <div class="tot"><span>Tổng đã cho đi</span><span id="give-tot">0 ₫</span></div>
-    </div>
-  </section>
-
   <!-- ===== SUB: HỘP QUÀ BÍ MẬT ===== -->
   <section class="view" id="sub-gift">
     <button class="back" onclick="goTab('more')">‹ Quay lại</button>
@@ -944,16 +1025,12 @@
       <div class="set"><span>Séc Vũ Trụ</span>
         <select class="in" id="s-sec"><option value="30">~30 phút/lần</option><option value="60">~1 tiếng/lần</option><option value="120" selected>~2 tiếng/lần</option></select>
       </div>
-      <div class="set"><span>Nhắc nhận biết</span>
-        <select class="in" id="s-aw"><option value="30">~30 phút/lần</option><option value="60" selected>~1 tiếng/lần</option><option value="0">Tắt</option></select>
-      </div>
       <div class="set"><span>Tin nhắn bạn bè</span>
         <select class="in" id="s-msg"><option value="30">~30 phút/lần</option><option value="60" selected>~1 tiếng/lần</option><option value="120">~2 tiếng/lần</option><option value="0">Tắt</option></select>
       </div>
       <div class="set"><span>Âm thanh pháo hoa + kaching</span>
         <label class="sw"><input type="checkbox" id="s-snd" checked><i></i></label>
       </div>
-      <button class="bglass" style="width:100%;margin-top:10px" onclick="fireAware()">🌿 Thử nhắc nhận biết</button>
     </div>
     <div class="card">
       <div class="sh">Sao lưu dữ liệu</div>
@@ -1021,6 +1098,7 @@
 <nav id="tabs">
   <button class="on" data-tab="sec"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m2 7 10 6L22 7"/></svg>Séc</button>
   <button data-tab="shop"><svg viewBox="0 0 24 24"><path d="M12 3v2M5.6 5.6l1.4 1.4M3 12h2M5.6 18.4l1.4-1.4M12 19v2M18.4 18.4l-1.4-1.4M19 12h2M18.4 5.6l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>Manifest</button>
+  <button data-tab="lotto"><svg viewBox="0 0 24 24"><path d="M3 8V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a2 2 0 0 0 0 4v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a2 2 0 0 0 0-4Z"/><path d="M10 5v2M10 11v2M10 17v2"/></svg>Xổ số</button>
   <button data-tab="ck"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M4 18V10M8 18V10M12 18V10M16 18V10M20 18V10"/><path d="m2 10 10-7 10 7Z"/></svg>Ngân hàng</button>
   <button data-tab="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Thêm</button>
 </nav>
@@ -1042,29 +1120,6 @@
   <div id="mc-holder"></div>
   <p class="ms" style="text-align:center;margin:11px 0 0" id="mc-msg"></p>
   <button class="bgold" style="width:100%;margin-top:12px;padding:16px;font-size:15px" id="mc-claim">💌 NHẬN SÉC VÀO TÀI KHOẢN</button>
-</div></div>
-
-<!-- aware -->
-<div class="ovl center" id="ov-aw"><div class="sheet" style="max-width:420px;text-align:center">
-  <div id="aw1">
-    <div id="aw-breath"><div class="core">🌿</div></div>
-    <h2 style="text-align:center">Tôi có đang nhận biết không?</h2>
-    <p class="ms" style="text-align:center">Dừng lại một nhịp. Bạn đang ở đâu — trong tâm trí, hay trong hiện tại?</p>
-    <button class="bgold" style="width:100%" onclick="awYes()">Có — quay về khoảnh khắc hiện tại ✨</button>
-    <button class="bglass" style="width:100%;margin-top:9px" onclick="hideOvl('ov-aw')">Để sau</button>
-  </div>
-  <div id="aw2" style="display:none">
-    <div id="aw-face">😌</div>
-    <h2 style="text-align:center">Bạn đang ở đây.</h2>
-    <p class="ms" style="text-align:center;margin-bottom:14px">Hít thở chậm... và thầm đọc theo từng câu:</p>
-    <div style="display:flex;flex-direction:column;gap:11px">
-      <div class="hline">Tôi xin lỗi</div>
-      <div class="hline">Xin hãy tha thứ cho tôi</div>
-      <div class="hline">Tôi cảm ơn</div>
-      <div class="hline">Tôi yêu bạn</div>
-    </div>
-    <button class="bglass" style="width:100%;margin-top:20px" onclick="hideOvl('ov-aw')">🙏 Tiếp tục ngày của tôi</button>
-  </div>
 </div></div>
 
 <!-- note create/edit -->
@@ -1242,10 +1297,9 @@ function load(){
   try{ d = JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){}
   return Object.assign({
     name:'', account:'', bank:'', checks:[], transfers:[], purchases:[], desires:[],
-    gratitude:[], journal:[], affirms:[], gives:[], media:[],
+    gratitude:[], journal:[], affirms:[], gives:[], media:[], lotto:{tickets:[],jackpot:100e9},
     giftLog:[], contacts:[], chats:{}, chatUnread:{},
-    affIdx:0,
-    settings:{ intervalMin:30, secMin:120, awareMin:60, msgMin:60, sound:true }
+    settings:{ intervalMin:30, secMin:120, msgMin:60, sound:true }
   }, d);
 }
 function save(){ localStorage.setItem(KEY, JSON.stringify(D)); }
@@ -1383,7 +1437,7 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.8.1';
+const APP_VER = '6.9.0';
 function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal(); }
 function totalR(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0); }
 function bankTheme(b){
@@ -1824,7 +1878,7 @@ function hideOvl(id){ $(id).classList.remove('show'); }
 function renderAll(){
   $('hbal').textContent = fmt(bal());
   renderCheck(); renderCK(); renderBank(); renderMarket(); renderShop(); renderLedger();
-  renderNotes(); renderJournalList(); renderAffList(); renderGiveList(); renderMedia();
+  renderNotes(); renderJournalList(); renderMedia(); renderLotto();
   renderGift(); msgBadge();
 }
 function renderCheck(){
@@ -1859,7 +1913,7 @@ function renderCK(){
   // lịch sử gộp: séc + CK vào, manifest + CK đi ra
   const items=[
     ...D.checks.map(c=>({ts:c.ts||0,amt:c.amount,dir:1,ic:'✉',t1:'Séc từ Vũ Trụ',t2:String(c.dateVN||c.date||'')})),
-    ...D.transfers.map(t=>({ts:t.ts||0,amt:t.amount,dir:1,ic:(t.kind==='sec'?'✉':'⇄'),t1:t.sender,t2:(t.content?t.content+' · ':'')+String(t.timeVN||t.dateVN||'')})),
+    ...D.transfers.map(t=>({ts:t.ts||0,amt:t.amount,dir:1,ic:(t.kind==='sec'?'✉':(t.kind==='lotto'?'🎟':'⇄')),t1:t.sender,t2:(t.content?t.content+' · ':'')+String(t.timeVN||t.dateVN||'')})),
     ...D.purchases.filter(p=>p.amount>0).map(p=>({ts:p.ts||0,amt:p.amount,dir:-1,ic:'🛍',t1:'Manifest: '+p.name,t2:String(p.dateVN||'')})),
     ...D.gives.filter(g=>g.sent&&g.transfer&&!g.priceless).map(g=>({ts:g.ts||0,amt:(g.transfer.amount||g.amount),dir:-1,ic:'💸',t1:'Chuyển đến '+(g.transfer.receiver||''),t2:(g.transfer.content||g.name)+' · '+String(g.transfer.timeVN||g.dateVN||'')}))
   ].sort((a,b)=>b.ts-a.ts).slice(0,60);
@@ -2192,40 +2246,135 @@ function renderJournalList(){
   });
 }
 
-/* ================= KHẲNG ĐỊNH ================= */
-const AFFS=['Tôi là thỏi nam châm thu hút tiền bạc. Sự sung túc đang chảy về phía tôi từ mọi hướng.','Tôi xứng đáng với một cuộc sống giàu có, khỏe mạnh và hạnh phúc.','Tiền đến với tôi dễ dàng, thường xuyên và dồi dào.','Tôi biết ơn từng đồng tiền tôi đang có, và từng đồng tiền đang trên đường đến.','Mỗi ngày, về mọi mặt, tôi càng ngày càng sung túc hơn.','Tôi cho đi với niềm vui, và tôi nhận lại gấp bội trong bình an.','Nguồn cung của Vũ Trụ là vô hạn, và tôi luôn được kết nối với nguồn ấy.','Tôi buông bỏ mọi niềm tin chật hẹp về tiền bạc. Tôi mở lòng đón nhận điều kỳ diệu.','Hôm nay là một ngày tuyệt vời, và những điều tốt đẹp đang tìm đến tôi.','Tôi làm chủ đồng tiền — đồng tiền phục vụ cho những giá trị tốt đẹp của tôi.'];
-function affList(){ return AFFS.concat(D.affirms); }
-function renderAff(){ $('aff-text').textContent = affList()[D.affIdx % affList().length]; }
-function nextAff(){ D.affIdx=(D.affIdx+1)%affList().length; save(); renderAff(); }
-function addAff(){ const t=$('aff-new').value.trim(); if(!t) return; D.affirms.push(t); $('aff-new').value=''; save(); renderAffList(); toast('✦ Đã thêm'); }
-function renderAffList(){
-  const box=$('aff-list'); box.innerHTML='';
-  D.affirms.forEach((a,i)=>{
-    const r=document.createElement('div'); r.className='grow-row';
-    r.innerHTML='<div class="g"><div class="t" style="font-weight:500">'+esc(a)+'</div></div>';
-    const x=document.createElement('button'); x.className='ib'; x.textContent='✕';
-    x.onclick=()=>{ D.affirms.splice(i,1); if(D.affIdx>=affList().length)D.affIdx=0; save(); renderAffList(); renderAff(); };
-    r.appendChild(x); box.appendChild(r);
-  });
-}
+/* ================= XỔ SỐ VŨ TRỤ =================
+   Mua một tấm vé, chọn 6 số, quay số rồi trúng Jackpot. Cố ý cho LUÔN TRÚNG:
+   đây là app manifest, không phải sòng bạc — mục đích là sống trong cảm giác đã trúng,
+   nên hồi hộp nằm ở màn quay số chứ không nằm ở chuyện thắng thua. */
+const LT_MAX=55, LT_PICK=6, LT_PRICE=10000;
+let ltSel=[], ltBusy=false;
 
-/* ================= CHO ĐI ================= */
-function addGive(){
-  const name=$('g-name').value.trim(), pl=$('g-pl').checked, amt=parseMoney($('g-amt').value);
-  if(!name) return toast('Nhập điều bạn đã cho đi nhé');
-  if(!pl&&(isNaN(amt)||amt<=0)) return toast('Nhập số tiền (vd: 2 tỷ rưỡi, 500k) hoặc chọn Vô giá');
-  D.gives.push({name,amount:pl?0:amt,priceless:pl,dateVN:todayVN()});
-  $('g-name').value='';$('g-amt').value='';$('g-pl').checked=false;
-  save(); renderGiveList(); toast('♥ Cho đi là còn mãi. Cảm ơn bạn!');
+function ltData(){
+  if(!D.lotto||typeof D.lotto!=='object') D.lotto={};
+  if(!Array.isArray(D.lotto.tickets)) D.lotto.tickets=[];
+  if(!D.lotto.jackpot) D.lotto.jackpot=100e9;
+  return D.lotto;
 }
-function renderGiveList(){
-  const box=$('give-list'); box.innerHTML='';
-  [...D.gives].reverse().slice(0,30).forEach(g=>{
+function ltPending(){ return ltData().tickets.find(t=>!t.drawn); }
+function ltToggle(n){
+  const i=ltSel.indexOf(n);
+  if(i>=0) ltSel.splice(i,1);
+  else { if(ltSel.length>=LT_PICK) return toast('Chỉ chọn '+LT_PICK+' số thôi nhé'); ltSel.push(n); }
+  renderLotto();
+}
+function ltQuick(){
+  const pool=[]; for(let i=1;i<=LT_MAX;i++) pool.push(i);
+  ltSel=[];
+  while(ltSel.length<LT_PICK) ltSel.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  ltSel.sort((a,b)=>a-b); renderLotto();
+}
+function ltClear(){ ltSel=[]; renderLotto(); }
+
+function ltBallRow(nums,hits){
+  return nums.map(n=>'<div class="b'+((hits||[]).includes(n)?' hit':'')+'">'+String(n).padStart(2,'0')+'</div>').join('');
+}
+function renderLotto(){
+  const L=ltData();
+  $('lt-jp').textContent=fmt(L.jackpot);
+  $('lt-jp-sub').textContent='Kỳ quay '+todayVN()+' · vé 10.000 ₫';
+
+  const g=$('lt-grid');
+  if(g.children.length!==LT_MAX){
+    g.innerHTML='';
+    for(let i=1;i<=LT_MAX;i++){
+      const b=document.createElement('button'); b.className='lnum'; b.textContent=i;
+      b.onclick=()=>ltToggle(i); g.appendChild(b);
+    }
+  }
+  [...g.children].forEach((b,i)=>b.classList.toggle('pick',ltSel.includes(i+1)));
+  $('lt-cnt').textContent=ltSel.length+'/'+LT_PICK;
+  const ready=ltSel.length===LT_PICK;
+  $('lt-buy').style.opacity=ready?'1':'.45';
+
+  const t=ltPending();
+  $('lt-pick').style.display=t?'none':'block';
+  $('lt-has').style.display=t?'block':'none';
+  if(t){
+    $('lt-kynum').textContent='#'+t.ky;
+    $('lt-balls').innerHTML=ltBallRow(t.nums,t.hits||[]);
+    $('lt-meta-l').textContent=t.id+' · '+t.dateVN;
+    if(!$('lt-bar').children.length){
+      let bar=''; for(let i=0;i<46;i++) bar+='<i style="height:'+(9+Math.random()*13).toFixed(0)+'px"></i>';
+      $('lt-bar').innerHTML=bar;
+    }
+  }
+  // lịch sử
+  const box=$('lt-hist'); box.innerHTML='';
+  const done=L.tickets.filter(x=>x.drawn).reverse().slice(0,20);
+  if(!done.length) box.innerHTML='<p class="note">Chưa có vé nào được quay.</p>';
+  done.forEach(x=>{
     const r=document.createElement('div'); r.className='grow-row';
-    r.innerHTML='<div class="thumb">'+(g.sent?'💸':'♥')+'</div><div class="g"><div class="t">'+esc(g.name)+'</div><div class="s">'+(g.sent&&g.transfer?esc('Đã chuyển đến '+(g.transfer.receiver||'')+' · '):'')+g.dateVN+'</div></div><span class="amt" style="color:#c7a3e8">'+(g.priceless?'Vô giá':fmt(g.amount))+'</span>';
+    r.innerHTML='<div class="thumb">🎟</div><div class="g"><div class="t">Kỳ #'+x.ky+' — '+x.nums.map(n=>String(n).padStart(2,'0')).join(' ')+'</div>'
+      +'<div class="s">'+x.dateVN+' · trùng '+x.nums.length+'/'+LT_PICK+'</div></div>'
+      +'<span class="amt" style="color:var(--gold2)">+'+fmtShort(x.won)+'</span>';
     box.appendChild(r);
   });
-  $('give-tot').textContent=fmt(D.gives.reduce((s,g)=>s+(g.priceless?0:g.amount),0));
+  $('lt-won').textContent=fmt(L.tickets.reduce((s,x)=>s+(x.won||0),0));
+}
+
+function ltBuy(){
+  if(ltSel.length!==LT_PICK) return toast('Chọn đủ '+LT_PICK+' con số đã nhé');
+  if(ltPending()) return toast('Bạn đang có một vé chưa quay');
+  if(bal()<LT_PRICE) return toast('Số dư chưa đủ mua vé — đợi Vũ Trụ gửi thêm nhé 💌');
+  const L=ltData();
+  const ky=(L.tickets.length||0)+1;
+  const id='VT'+String(Date.now()).slice(-8);
+  L.tickets.push({id,ky,nums:[...ltSel].sort((a,b)=>a-b),price:LT_PRICE,dateVN:todayVN(),ts:Date.now(),drawn:false,won:0,hits:[]});
+  D.purchases.push({name:'Vé Xổ Số Vũ Trụ — kỳ #'+ky,amount:LT_PRICE,dateVN:todayVN()});
+  ltSel=[];
+  save(); renderAll(); renderLotto();
+  $('lt-status').textContent='Vé của bạn đã sẵn sàng. Bấm quay số nhé!';
+  $('lt-out').innerHTML=''; $('lt-go').style.display='block';
+  toast('🎟 Đã mua vé kỳ #'+ky+' — chúc bạn trúng lớn!');
+}
+
+function ltDraw(){
+  const t=ltPending(); if(!t||ltBusy) return;
+  ltBusy=true;
+  $('lt-go').style.display='none';
+  $('lt-out').innerHTML='';
+  $('lt-drum').classList.add('spin');
+  $('lt-status').textContent='Lồng cầu đang quay...';
+  // thứ tự nhả bóng xáo trộn cho giống quay thật, nhưng số thì đúng số của bạn
+  const order=[...t.nums].sort(()=>Math.random()-0.5);
+  t.hits=[];
+  let i=0;
+  const step=()=>{
+    if(i>=order.length){ ltWin(t); return; }
+    const n=order[i++];
+    const b=document.createElement('div'); b.className='oball'; b.textContent=String(n).padStart(2,'0');
+    $('lt-out').appendChild(b);
+    t.hits.push(n);
+    $('lt-balls').innerHTML=ltBallRow(t.nums,t.hits);
+    $('lt-status').textContent='Trùng '+t.hits.length+'/'+LT_PICK+(t.hits.length===LT_PICK?'' : ' — hồi hộp quá!');
+    if(D.settings.sound!==false){ try{ bell(); }catch(e){} }
+    setTimeout(step,1400);
+  };
+  setTimeout(step,1600);
+}
+
+function ltWin(t){
+  const L=ltData();
+  $('lt-drum').classList.remove('spin');
+  $('lt-drum').textContent='🎉';
+  $('lt-status').textContent='TRÙNG CẢ 6 SỐ — JACKPOT!';
+  t.drawn=true; t.won=L.jackpot;
+  // ghi vào lịch sử ngân hàng để số dư và sổ sách khớp nhau
+  D.transfers.push({sender:'XỔ SỐ VŨ TRỤ',content:'TRÚNG JACKPOT 6/55 — KỲ #'+t.ky,amount:L.jackpot,
+    kind:'lotto',timeVN:nowVN(),dateVN:todayVN(),ts:Date.now()});
+  save(); renderAll(); renderLotto();
+  celebrate('🎰 TRÚNG JACKPOT! 🎰','+'+fmt(L.jackpot),
+    'Vé kỳ #'+t.ky+' của '+(D.name||'bạn')+' trùng cả 6 số — '+docTien(L.jackpot),18);
+  setTimeout(()=>{ ltBusy=false; $('lt-drum').textContent='🎱'; renderLotto(); },1200);
 }
 
 /* ================= CUỘC SỐNG ================= */
@@ -2257,7 +2406,6 @@ function loadSet(){
   $('s-name').value=D.name||''; $('s-acc').value=D.account||''; $('s-bank').value=D.bank||'';
   $('s-int').value=String(D.settings.intervalMin||30);
   $('s-sec').value=String(D.settings.secMin||120);
-  $('s-aw').value=String(D.settings.awareMin!==undefined?D.settings.awareMin:60);
   $('s-msg').value=String(D.settings.msgMin!==undefined?D.settings.msgMin:60);
   $('s-snd').checked=D.settings.sound!==false;
 }
@@ -2267,8 +2415,8 @@ function saveInfo(){
   D.name=n; D.account=$('s-acc').value.trim(); D.bank=$('s-bank').value.trim();
   save(); renderAll(); toast('Đã lưu thông tin của '+n);
 }
-['s-int','s-sec','s-aw','s-msg','s-snd'].forEach(id=>$(id).addEventListener('change',()=>{
-  D.settings={intervalMin:Number($('s-int').value),secMin:Number($('s-sec').value),awareMin:Number($('s-aw').value),msgMin:Number($('s-msg').value),sound:$('s-snd').checked};
+['s-int','s-sec','s-msg','s-snd'].forEach(id=>$(id).addEventListener('change',()=>{
+  D.settings={intervalMin:Number($('s-int').value),secMin:Number($('s-sec').value),msgMin:Number($('s-msg').value),sound:$('s-snd').checked};
   save(); schedule(); toast('Đã lưu cài đặt');
 }));
 function exportData(){
@@ -2288,7 +2436,7 @@ $('imp-file').addEventListener('change',e=>{
       if(!d||typeof d!=='object'||!('checks'in d)) throw 0;
       if(confirm('Khôi phục sẽ thay thế dữ liệu hiện tại. Tiếp tục?')){
         localStorage.setItem(KEY,JSON.stringify(d));
-        D=load(); loadSet(); renderAll(); renderAff();
+        D=load(); loadSet(); renderAll();
         toast('Đã khôi phục dữ liệu ✓');
       }
     }catch(err){ toast('File sao lưu không hợp lệ'); }
@@ -2361,19 +2509,6 @@ function accept(t){
 }
 
 /* ================= NHẬN BIẾT ================= */
-function fireAware(){
-  $('aw1').style.display='block'; $('aw2').style.display='none';
-  document.querySelectorAll('.hline').forEach(l=>l.classList.remove('show'));
-  $('ov-aw').classList.add('show');
-}
-function awYes(){
-  $('aw1').style.display='none'; $('aw2').style.display='block';
-  if(D.settings.sound!==false) bell();
-  document.querySelectorAll('.hline').forEach((l,i)=>{
-    setTimeout(()=>{ l.classList.add('show'); if(i>0&&D.settings.sound!==false) bell(); }, 900+i*4000);
-  });
-}
-
 /* ================= HỘP QUÀ BÍ MẬT ================= */
 function giftPool(){
   const items = [];
@@ -2817,10 +2952,10 @@ function fireFriendMsg(){
 }
 
 /* ================= LỊCH TỰ ĐỘNG (khi app đang mở) ================= */
-let tCK=null,tSec=null,tAw=null,tMsg=null,first=true;
+let tCK=null,tSec=null,tMsg=null,first=true;
 function jit(min){ return min*60*1000*(0.75+Math.random()*0.5); }
 function schedule(){
-  clearTimeout(tCK);clearTimeout(tSec);clearTimeout(tAw);clearTimeout(tMsg);
+  clearTimeout(tCK);clearTimeout(tSec);clearTimeout(tMsg);
   if(Number(D.settings.msgMin)>0){
     tMsg=setTimeout(function f(){
       fireFriendMsg();
@@ -2836,12 +2971,6 @@ function schedule(){
     fireSec();
     tSec=setTimeout(f,jit(s.secMin||120));
   }, first?300000:jit(s.secMin||120));
-  if(s.awareMin>0){
-    tAw=setTimeout(function f(){
-      if(!$('ov-rc').classList.contains('show')&&!$('ov-mc').classList.contains('show')) fireAware();
-      tAw=setTimeout(f,jit(s.awareMin));
-    }, first?480000:jit(s.awareMin));
-  }
   first=false;
 }
 
@@ -2855,7 +2984,7 @@ idbReady.then(()=>{
       }
     },600);
   }
-  loadSet(); renderAll(); renderAff(); schedule();
+  loadSet(); renderAll(); schedule();
   // dấu phiên bản: để biết máy đang chạy bản nào khi có gì đó lạ
   try{ $('app-ver').textContent = APP_VER; }catch(e){}
 });
