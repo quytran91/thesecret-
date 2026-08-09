@@ -219,30 +219,30 @@
   .lnum:active{transform:scale(.88)}
   .lnum.pick{background:var(--ggrad);color:#171204;border-color:transparent;box-shadow:0 0 14px rgba(215,181,109,.5)}
   /* tấm vé */
-  .tick{
+  .ltk{
     background:linear-gradient(168deg,#fdf8ec,#f3e6c8);color:#2b2415;border-radius:16px;
     padding:15px 16px 13px;position:relative;box-shadow:0 12px 34px rgba(0,0,0,.45);
     font-family:'Segoe UI',system-ui,sans-serif;
   }
-  .tick::before,.tick::after{content:'';position:absolute;width:19px;height:19px;border-radius:50%;
+  .ltk::before,.ltk::after{content:'';position:absolute;width:19px;height:19px;border-radius:50%;
     background:var(--bg);top:50%;transform:translateY(-50%)}
-  .tick::before{left:-10px} .tick::after{right:-10px}
-  .tick .th{display:flex;justify-content:space-between;align-items:baseline;
+  .ltk::before{left:-10px} .ltk::after{right:-10px}
+  .ltk .th{display:flex;justify-content:space-between;align-items:baseline;
     border-bottom:1.5px dashed rgba(43,36,21,.28);padding-bottom:8px}
-  .tick .bn{font-size:13.5px;font-weight:800;letter-spacing:.6px}
-  .tick .gm{font-size:10px;letter-spacing:1.6px;color:#7a6a44;font-weight:700}
-  .tick .balls{display:flex;gap:8px;justify-content:center;margin:14px 0 10px;flex-wrap:wrap}
-  .tick .b{
+  .ltk .bn{font-size:13.5px;font-weight:800;letter-spacing:.6px}
+  .ltk .gm{font-size:10px;letter-spacing:1.6px;color:#7a6a44;font-weight:700}
+  .ltk .balls{display:flex;gap:8px;justify-content:center;margin:14px 0 10px;flex-wrap:wrap}
+  .ltk .b{
     width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid #cbb888;
     display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;
     font-variant-numeric:tabular-nums;transition:all .35s;
   }
-  .tick .b.hit{background:linear-gradient(160deg,#f7d97a,#d4a843);border-color:#b98f2c;color:#241c07;
+  .ltk .b.hit{background:linear-gradient(160deg,#f7d97a,#d4a843);border-color:#b98f2c;color:#241c07;
     transform:scale(1.14);box-shadow:0 0 18px rgba(215,168,67,.85)}
-  .tick .meta{display:flex;justify-content:space-between;font-size:9.5px;color:#7a6a44;
+  .ltk .meta{display:flex;justify-content:space-between;font-size:9.5px;color:#7a6a44;
     border-top:1.5px dashed rgba(43,36,21,.28);padding-top:8px;letter-spacing:.3px}
-  .tick .bar{display:flex;gap:1.5px;justify-content:center;margin-top:9px;height:22px;align-items:flex-end}
-  .tick .bar i{background:#2b2415;width:2px;display:block}
+  .ltk .bar{display:flex;gap:1.5px;justify-content:center;margin-top:9px;height:22px;align-items:flex-end}
+  .ltk .bar i{background:#2b2415;width:2px;display:block}
   /* lồng cầu quay */
   #lt-draw{text-align:center;padding:6px 0 2px}
   #lt-drum{
@@ -844,7 +844,7 @@
 
     <!-- BƯỚC 2: tấm vé + quay số -->
     <div id="lt-has" style="display:none;margin-top:14px">
-      <div class="tick" id="lt-ticket">
+      <div class="ltk" id="lt-ticket">
         <div class="th">
           <div><div class="bn">XỔ SỐ VŨ TRỤ</div><div class="gm">JACKPOT 6/55</div></div>
           <div style="text-align:right"><div class="gm">KỲ QUAY</div><div class="bn" id="lt-kynum">—</div></div>
@@ -1438,7 +1438,7 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.9.2';
+const APP_VER = '6.9.5';
 function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal(); }
 function totalR(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0); }
 function bankTheme(b){
