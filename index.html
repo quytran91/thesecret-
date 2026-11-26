@@ -1113,7 +1113,10 @@
       </div>
       <p class="note">Ảnh/video trong thư viện lưu riêng trên máy, không nằm trong file sao lưu</p>
     </div>
-    <p class="note" style="text-align:center;margin-top:16px;opacity:.55">Phiên bản <b id="app-ver">—</b></p>
+    <!-- App thêm ra màn hình chính thì không có thanh địa chỉ để kéo làm mới,
+         nên phải có đường cập nhật ngay trong app. -->
+    <button class="bglass" style="width:100%;margin-top:14px;padding:13px" onclick="kiemTraBanMoi()">Kiểm tra bản mới</button>
+    <p class="note" style="text-align:center;margin-top:12px;opacity:.55">Phiên bản <b id="app-ver">—</b><span id="ver-note"></span></p>
   </section>
 
   <!-- ===== SUB: CHUYỂN TIỀN TRONG NƯỚC ===== -->
@@ -1534,7 +1537,7 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.10.1';
+const APP_VER = '6.10.2';
 /* Tiền tiêu ở Siêu thị gom vào D.shopChi — KHÔNG đẩy vào D.purchases, để danh sách
    "đã manifest" không bị loãng y như vé xổ số. */
 function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal()-(D.shopChi||0); }
@@ -2274,6 +2277,41 @@ function mDatHang(){
     +soMon+' món đang trên đường đến '+esc(dia);
   $('m-ok-ma').textContent='Mã đơn VT'+String(Date.now()).slice(-10);
   hideOvl('ov-mtt'); $('ov-mok').classList.add('show');
+}
+
+/* Bấm là hỏi thẳng máy chủ xem có bản mới chưa.
+   App thêm ra màn hình chính không có thanh địa chỉ để kéo làm mới, nên đây là
+   đường cập nhật duy nhất không phải đóng mở app mấy lượt. */
+async function kiemTraBanMoi(){
+  const bao = t => { try{ $('ver-note').textContent = ' — ' + t; }catch(e){} };
+  if(location.protocol !== 'https:') return toast('Chức năng này chỉ chạy trên bản web (https)');
+  bao('đang kiểm tra...');
+  try{
+    // cache:'reload' = bỏ qua mọi bộ nhớ đệm, hỏi thẳng máy chủ
+    const res = await fetch('index.html?nocache=' + Date.now(), { cache: 'reload' });
+    const txt = await res.text();
+    const m = txt.match(/APP_VER\s*=\s*'([^']+)'/);
+    const moi = m ? m[1] : null;
+    if(moi && moi !== APP_VER){
+      bao('có bản ' + moi + ' — đang cập nhật');
+      toast('Đã có bản ' + moi + ' — app sẽ tự mở lại sau một nhịp');
+      if('serviceWorker' in navigator){
+        const reg = await navigator.serviceWorker.getRegistration();
+        if(reg){
+          await reg.update().catch(()=>{});
+          if(reg.waiting) reg.waiting.postMessage('skip-waiting');
+        }
+      }
+      // bộ theo dõi controllerchange sẽ tự tải lại; đây là lưới an toàn phòng khi nó không chạy
+      setTimeout(() => location.reload(), 2500);
+    } else {
+      bao('đang là bản mới nhất');
+      toast('Bạn đang dùng bản mới nhất rồi ✦');
+    }
+  }catch(e){
+    bao('không kiểm tra được');
+    toast('Không kết nối được để kiểm tra — thử lại khi có mạng nhé');
+  }
 }
 
 async function renderShop(){
