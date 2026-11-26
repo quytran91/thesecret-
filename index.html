@@ -1359,7 +1359,33 @@ function ensureJsQR(){
   return _jsqrP;
 }
 // đăng ký service worker để app chạy offline (chỉ khi host thật, vd GitHub Pages)
-try{ if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
+/* Đăng ký bộ phục vụ ngoại tuyến VÀ tự nhận bản mới.
+   Trước đây chỉ đăng ký rồi thôi: app lấy bản trong máy ra dùng (cho nhanh), bản mới tải
+   ngầm nhưng phải mở đi mở lại vài lần mới thấy — rất khó hiểu với người dùng.
+   Nay: thấy bản mới thì bảo nó nắm quyền ngay, rồi tự tải lại trang ĐÚNG MỘT LẦN. */
+try{
+  if('serviceWorker' in navigator && location.protocol==='https:'){
+    const daCoBanCu = !!navigator.serviceWorker.controller;
+    let daTaiLai = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      // lần cài đầu tiên thì KHÔNG tải lại (chưa từng có bản cũ, tải lại là thừa)
+      if(!daCoBanCu || daTaiLai) return;
+      daTaiLai = true;
+      location.reload();
+    });
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      const giuc = sw => {
+        if(!sw) return;
+        sw.addEventListener('statechange', () => {
+          if(sw.state === 'installed' && navigator.serviceWorker.controller) sw.postMessage('skip-waiting');
+        });
+      };
+      if(reg.waiting) reg.waiting.postMessage('skip-waiting');   // bản mới đang chờ sẵn
+      reg.addEventListener('updatefound', () => giuc(reg.installing));
+      reg.update().catch(()=>{});                                 // mỗi lần mở app là hỏi lại máy chủ
+    }).catch(()=>{});
+  }
+}catch(e){}
 
 /* ================= STORE ================= */
 const KEY = 'sungtuc_web_v1';
@@ -1508,7 +1534,7 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.10.0';
+const APP_VER = '6.10.1';
 /* Tiền tiêu ở Siêu thị gom vào D.shopChi — KHÔNG đẩy vào D.purchases, để danh sách
    "đã manifest" không bị loãng y như vé xổ số. */
 function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal()-(D.shopChi||0); }

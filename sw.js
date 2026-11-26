@@ -9,7 +9,7 @@
 // Từ v3 ảnh/video được tách ra file rời. Chỉ tải sẵn những thứ cần để VẼ ĐƯỢC màn hình đầu
 // (~0,8 MB); mưa tiền, GIF nhảy múa, GIF hộp quà (~6,5 MB) đợi lúc ăn mừng đầu tiên mới tải,
 // tải xong nằm lại trong máy nên chỉ tốn đúng một lần.
-const CACHE = 'secret-v4';
+const CACHE = 'secret-v5';
 const CORE = [
   './', './index.html', './manifest.webmanifest',
   './assets/logo-seal.png', './assets/counter.gif', './assets/emoji-sheet.png', './assets/kaching.mp3'
