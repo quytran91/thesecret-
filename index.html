@@ -662,6 +662,23 @@
     80%{opacity:.95}
     100%{opacity:0;transform:translate(var(--dx),-108vh) scale(1.15) rotate(var(--rot))}
   }
+  /* ===== Siêu thị Vũ Trụ (bản web) ===== */
+  #mart-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+  .mcard{background:var(--card,rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+  .mph{height:104px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden}
+  .mph img{width:100%;height:100%;object-fit:cover}
+  .mnm{padding:9px 11px 1px;font-size:13px;font-weight:600;line-height:1.3}
+  .mpr{padding:0 11px;font-size:12.5px;font-weight:700;color:var(--gold)}
+  .mlan{padding:3px 11px 0;font-size:10.5px;font-weight:600;color:var(--gold)}
+  .mlan.mo{opacity:.5;font-weight:400}
+  .mbtn{margin:9px 11px 0;padding:9px;font-size:12px;width:calc(100% - 22px)}
+  .mbo{margin-bottom:11px;opacity:.75;font-size:11.5px;padding:7px}
+  .msl{display:flex;align-items:center;gap:8px}
+  .msl button{width:27px;height:27px;border-radius:8px;border:1px solid rgba(255,255,255,.16);background:transparent;color:inherit;font-size:15px;line-height:1}
+  .msl b{min-width:15px;text-align:center;font-size:13px}
+  .mtong{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:14px;font-size:13px;opacity:.8}
+  .mtong b{font-size:20px;font-weight:800;color:var(--gold)}
+  .mtick{width:52px;height:52px;border-radius:50%;margin:2px auto 10px;font-size:25px;display:flex;align-items:center;justify-content:center;background:rgba(46,204,143,.16);border:1px solid rgba(46,204,143,.35);color:#4ee39b}
 </style>
 
 <!-- ================= HEADER ================= -->
@@ -904,6 +921,7 @@
       <div class="menu-item" onclick="goSub('sub-msg');renderMsgAll()"><span class="ic">💬</span> Tin nhắn <span id="msg-badge" style="display:none;min-width:18px;height:18px;border-radius:9px;background:#ff453a;color:#fff;font-size:10.5px;font-weight:700;text-align:center;line-height:18px;padding:0 5px"></span> <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('v-write')"><span class="ic">✎</span> Viết — Biết ơn &amp; Nhật ký <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-ledger')"><span class="ic">◆</span> Tiền đã manifest <span class="ar">›</span></div>
+      <div class="menu-item" onclick="goSub('sub-mart');renderMart()"><span class="ic">🛒</span> Siêu thị Vũ Trụ <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('v-lotto');renderLotto()"><span class="ic">🎟</span> Xổ Số Vũ Trụ <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-life')"><span class="ic">▣</span> Cuộc sống của tôi <span class="ar">›</span></div>
       <div class="menu-item" onclick="goSub('sub-set')"><span class="ic">⚙</span> Cài đặt & Thông tin <span class="ar">›</span></div>
@@ -912,6 +930,58 @@
   </section>
 
   <!-- ===== SUB: LEDGER ===== -->
+  <!-- ============ SIÊU THỊ VŨ TRỤ (diễn tập mua sắm, không ghi sổ đơn hàng) ============ -->
+  <section class="view" id="sub-mart">
+    <button class="back" onclick="goTab('more')">‹ Quay lại</button>
+    <h2 class="vt">Siêu thị Vũ Trụ</h2>
+    <p class="vs">Món trên kệ không mất đi — mua lại bao nhiêu lần tuỳ bạn. App chỉ đếm xem bạn đã sở hữu món đó mấy lần, không ghi sổ đơn hàng.</p>
+    <button class="bgold" style="width:100%;padding:14px;margin-bottom:14px" onclick="mMoGio()">🛒 Giỏ hàng <span id="m-cart-n">0</span></button>
+    <div id="mart-grid"></div>
+    <div class="empty" id="mart-empty">Kệ còn trống — thêm món đầu tiên bên dưới nhé.</div>
+    <div class="card">
+      <div class="sh">Thêm món lên kệ</div>
+      <input class="in" type="text" id="m-name" placeholder="Tên món (vd: PlayStation 5)">
+      <input class="in" type="text" id="m-price" placeholder="Giá (vd: 25 triệu)" style="margin-top:9px">
+      <button class="bglass" style="width:100%;margin-top:9px;padding:12px" onclick="mPickImg()">Chọn ảnh</button>
+      <p class="note" id="m-img-note" style="display:none"></p>
+      <button class="bgold" style="width:100%;margin-top:9px;padding:14px" onclick="mAdd()">Thêm lên kệ</button>
+    </div>
+  </section>
+
+  <!-- giỏ hàng -->
+  <div class="ovl" id="ov-mgio"><div class="sheet">
+    <div class="grab"></div>
+    <h2>Giỏ hàng của bạn</h2>
+    <p class="ms">Đặt xong là tiền trừ thẳng từ tài khoản Vũ Trụ.</p>
+    <div id="m-gio-list" style="margin-top:10px"></div>
+    <div class="mtong"><span>Tổng cộng</span><b id="m-gio-tong">0 ₫</b></div>
+    <button class="bgold" style="width:100%;margin-top:12px;padding:15px" onclick="mToiThanhToan()">Tiến hành đặt hàng →</button>
+    <button class="bglass" style="width:100%;margin-top:9px;padding:13px" onclick="hideOvl('ov-mgio')">Mua tiếp</button>
+  </div></div>
+
+  <!-- thanh toán -->
+  <div class="ovl" id="ov-mtt"><div class="sheet">
+    <div class="grab"></div>
+    <h2>Thông tin nhận hàng</h2>
+    <p class="ms">Điền địa chỉ như một đơn hàng thật — chính chi tiết này khiến tiềm thức tin món đồ đang trên đường về nhà bạn.</p>
+    <input class="in" type="text" id="m-ten" placeholder="Họ tên người nhận" style="margin-top:10px">
+    <input class="in" type="text" id="m-sdt" placeholder="Số điện thoại" style="margin-top:9px">
+    <input class="in" type="text" id="m-dia" placeholder="Địa chỉ nhận hàng" style="margin-top:9px">
+    <div class="mtong"><span>Tổng thanh toán</span><b id="m-tt-tong">0 ₫</b></div>
+    <button class="bgold" style="width:100%;margin-top:12px;padding:15px" onclick="mDatHang()">Đặt hàng</button>
+    <button class="bglass" style="width:100%;margin-top:9px;padding:13px" onclick="hideOvl('ov-mtt');mMoGio()">← Quay lại giỏ</button>
+  </div></div>
+
+  <!-- đặt hàng xong -->
+  <div class="ovl" id="ov-mok"><div class="sheet" style="text-align:center">
+    <div class="grab"></div>
+    <div class="mtick">✓</div>
+    <h2>Đặt hàng thành công</h2>
+    <p class="ms" id="m-ok-sub" style="margin-top:7px"></p>
+    <p class="note" id="m-ok-ma" style="margin-top:9px"></p>
+    <button class="bgold" style="width:100%;margin-top:14px;padding:15px" onclick="hideOvl('ov-mok')">Cảm nhận điều này ✦</button>
+  </div></div>
+
   <section class="view" id="sub-ledger">
     <button class="back" onclick="goTab('more')">‹ Quay lại</button>
     <div class="hero"><div class="c">TỔNG SỐ TIỀN ĐÃ MANIFEST</div><div class="b" id="led-tot">0 ₫</div><div class="s" id="led-cnt"></div></div>
@@ -1438,8 +1508,10 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.9.5';
-function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal(); }
+const APP_VER = '6.10.0';
+/* Tiền tiêu ở Siêu thị gom vào D.shopChi — KHÔNG đẩy vào D.purchases, để danh sách
+   "đã manifest" không bị loãng y như vé xổ số. */
+function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal()-(D.shopChi||0); }
 function totalR(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0); }
 function bankTheme(b){
   b=(b||'').toLowerCase();
@@ -2048,10 +2120,143 @@ function quickBuy(){
   showSms(amt,true,name);
   celebrate('✦ MANIFEST THÀNH CÔNG! ✦',name+' đã là hiện thực!','Vũ Trụ đã trao nó cho '+(D.name||'bạn')+' 💛',11);
 }
+/* ================= SIÊU THỊ VŨ TRỤ (bản web) =================
+   Giống bản Windows: giữ MÓN trên kệ, KHÔNG giữ lần mua. Mua một món trăm lần thì
+   vẫn một dòng trên kệ, chỉ con số "đã sở hữu mấy lần" tăng lên.
+   Tiền trừ thật nhưng gom vào D.shopChi (một con số) chứ KHÔNG đẩy vào D.purchases —
+   đẩy vào đó là danh sách "đã manifest" lại loãng y như vé xổ số. */
+function mKe(){ if(!Array.isArray(D.shopKe)) D.shopKe=[]; return D.shopKe; }
+function mGio(){ if(!Array.isArray(D.shopGio)) D.shopGio=[]; return D.shopGio; }
+function mMon(id){ return mKe().filter(x=>x.id===id)[0]; }
+function mHopLe(){ return mGio().filter(g=>mMon(g.id)); }
+function mTong(){ return mHopLe().reduce((s,g)=>{const m=mMon(g.id);return s+m.amount*g.sl;},0); }
+function mSo(){ return mHopLe().reduce((s,g)=>s+g.sl,0); }
+
+let mImgId=null;
+async function mPickImg(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=async()=>{
+    if(!inp.files[0]) return;
+    mImgId=newId();
+    await idbPut(mImgId, inp.files[0]);
+    $('m-img-note').style.display='block';
+    $('m-img-note').textContent='✓ Đã chọn ảnh: '+inp.files[0].name;
+  };
+  inp.click();
+}
+function mAdd(){
+  const name=$('m-name').value.trim();
+  const gia=parseMoney($('m-price').value);
+  if(!name) return toast('Nhập tên món đồ nhé');
+  if(isNaN(gia)||gia<=0) return toast('Nhập giá (vd: 25 triệu, 500k...)');
+  mKe().push({id:'m'+Date.now()+Math.floor(Math.random()*999),name,amount:gia,imgId:mImgId,lan:0});
+  $('m-name').value=''; $('m-price').value='';
+  mImgId=null; $('m-img-note').style.display='none';
+  save(); renderMart();
+  toast('✦ Đã lên kệ — giờ mua bao nhiêu lần cũng được');
+}
+async function renderMart(){
+  const g=$('mart-grid'); if(!g) return;
+  const ke=mKe();
+  $('mart-empty').style.display = ke.length?'none':'block';
+  g.innerHTML='';
+  for(const m of ke){
+    const d=document.createElement('div'); d.className='mcard';
+    let ph='<div class="mph">🛍</div>';
+    if(m.imgId){ const u=await blobUrl(m.imgId); if(u) ph='<div class="mph"><img src="'+u+'"></div>'; }
+    d.innerHTML=ph
+      +'<div class="mnm">'+esc(m.name)+'</div>'
+      +'<div class="mpr">'+fmt(m.amount)+'</div>'
+      +(m.lan?'<div class="mlan">✦ Đã sở hữu '+m.lan+' lần</div>':'<div class="mlan mo">Chưa mua lần nào</div>')
+      +'<button class="bgold mbtn" data-them="'+esc(m.id)+'">Thêm vào giỏ</button>'
+      +'<button class="bglass mbtn mbo" data-bo="'+esc(m.id)+'">Bỏ khỏi kệ</button>';
+    g.appendChild(d);
+  }
+  $('m-cart-n').textContent=mSo();
+}
+function mBatSuKien(){
+  $('mart-grid').addEventListener('click',(e)=>{
+    const t=e.target.closest('[data-them]'), b=e.target.closest('[data-bo]');
+    if(t){
+      const id=t.dataset.them;
+      const co=mGio().filter(x=>x.id===id)[0];
+      if(co) co.sl++; else mGio().push({id,sl:1});
+      save();
+      $('m-cart-n').textContent=mSo();   // chỉ đổi con số, khỏi vẽ lại cả lưới cho khỏi nhấp nháy
+      const m=mMon(id); toast('Đã thêm '+(m?m.name:'món')+' vào giỏ');
+      return;
+    }
+    if(b){
+      const id=b.dataset.bo, m=mMon(id);
+      if(!confirm('Bỏ "'+(m?m.name:'')+'" khỏi kệ? Số lần đã sở hữu cũng mất theo.')) return;
+      if(m&&m.imgId) idbDel(m.imgId);
+      D.shopKe=mKe().filter(x=>x.id!==id);
+      D.shopGio=mGio().filter(x=>x.id!==id);
+      save(); renderMart();
+    }
+  });
+  $('m-gio-list').addEventListener('click',(e)=>{
+    const c=e.target.closest('[data-cong]'), t=e.target.closest('[data-tru]');
+    if(!c&&!t) return;
+    const id=c?c.dataset.cong:t.dataset.tru;
+    const g=mGio().filter(x=>x.id===id)[0]; if(!g) return;
+    g.sl+=c?1:-1;
+    if(g.sl<=0) D.shopGio=mGio().filter(x=>x.id!==id);
+    save(); renderGio(); renderMart();
+  });
+}
+async function renderGio(){
+  const box=$('m-gio-list'); box.innerHTML='';
+  const gio=mHopLe();
+  if(!gio.length){ box.innerHTML='<div class="empty">Giỏ đang trống — chọn vài món trên kệ nhé.</div>'; }
+  for(const g of gio){
+    const m=mMon(g.id);
+    const r=document.createElement('div'); r.className='grow-row';
+    let th='<div class="thumb">🛍</div>';
+    if(m.imgId){ const u=await blobUrl(m.imgId); if(u) th='<div class="thumb" style="padding:0;overflow:hidden"><img src="'+u+'" style="width:100%;height:100%;object-fit:cover"></div>'; }
+    r.innerHTML=th+'<div class="g"><div class="t">'+esc(m.name)+'</div><div class="s">'+fmt(m.amount)+' × '+g.sl+'</div></div>'
+      +'<div class="msl"><button data-tru="'+esc(m.id)+'">−</button><b>'+g.sl+'</b><button data-cong="'+esc(m.id)+'">+</button></div>';
+    box.appendChild(r);
+  }
+  $('m-gio-tong').textContent=fmt(mTong());
+}
+function mMoGio(){ renderGio(); $('ov-mgio').classList.add('show'); }
+function mToiThanhToan(){
+  if(!mHopLe().length) return toast('Giỏ đang trống');
+  const dc=D.shopDiaChi||{};
+  $('m-ten').value=dc.ten||D.name||'';
+  $('m-sdt').value=dc.sdt||'';
+  $('m-dia').value=dc.dia||'';
+  $('m-tt-tong').textContent=fmt(mTong());
+  hideOvl('ov-mgio'); $('ov-mtt').classList.add('show');
+}
+function mDatHang(){
+  const gio=mHopLe().map(g=>({id:g.id,sl:g.sl,ten:mMon(g.id).name}));
+  if(!gio.length) return;
+  const tong=mTong();
+  if(tong>bal()) return toast('Số dư chưa đủ — đợi Vũ Trụ gửi thêm nhé 💌');
+  const dia=$('m-dia').value.trim();
+  if(!dia){ $('m-dia').focus(); return toast('Điền địa chỉ nhận hàng nhé'); }
+  D.shopDiaChi={ten:$('m-ten').value.trim(),sdt:$('m-sdt').value.trim(),dia};
+  D.shopChi=(D.shopChi||0)+tong;
+  D.shopDon=(D.shopDon||0)+1;
+  gio.forEach(g=>{ const m=mMon(g.id); if(m) m.lan=(m.lan||0)+g.sl; });
+  D.shopGio=[];
+  save(); renderAll(); renderMart();
+  const soMon=gio.reduce((s,g)=>s+g.sl,0);
+  $('m-ok-sub').innerHTML='<b style="color:var(--gold)">'+fmt(tong)+'</b> đã thanh toán từ tài khoản Vũ Trụ.<br>'
+    +soMon+' món đang trên đường đến '+esc(dia);
+  $('m-ok-ma').textContent='Mã đơn VT'+String(Date.now()).slice(-10);
+  hideOvl('ov-mtt'); $('ov-mok').classList.add('show');
+}
+
 async function renderShop(){
   const box=$('shop-list'); box.innerHTML='';
-  if(!D.purchases.length) box.innerHTML='<div class="empty">Chưa mua món nào.</div>';
-  for(const p of [...D.purchases].reverse().slice(0,30)){
+  /* Vé xổ số mỗi kỳ một dòng thì chẳng mấy mà nó lấn hết những món bạn THẬT SỰ
+     manifest được. Lọc khỏi danh sách, tiền thì vẫn trừ đủ như cũ. */
+  const ds = D.purchases.filter(p => !p.lt && !/^Vé Xổ Số Vũ Trụ/.test(p.name || ''));
+  if(!ds.length) box.innerHTML='<div class="empty">Chưa mua món nào.</div>';
+  for(const p of [...ds].reverse().slice(0,30)){
     const r=document.createElement('div'); r.className='grow-row';
     let th='<div class="thumb">✓</div>';
     if(p.imgId){ const u=await blobUrl(p.imgId); if(u) th='<div class="thumb" style="padding:0;overflow:hidden"><img src="'+u+'" style="width:100%;height:100%;object-fit:cover"></div>'; }
@@ -2330,7 +2535,8 @@ function ltBuy(){
   const ky=(L.tickets.length||0)+1;
   const id='VT'+String(Date.now()).slice(-8);
   L.tickets.push({id,ky,nums:[...ltSel].sort((a,b)=>a-b),price:LT_PRICE,dateVN:todayVN(),ts:Date.now(),drawn:false,won:0,hits:[]});
-  D.purchases.push({name:'Vé Xổ Số Vũ Trụ — kỳ #'+ky,amount:LT_PRICE,dateVN:todayVN()});
+  // cờ lt: vẫn trừ tiền như cũ nhưng KHÔNG hiện trong danh sách đã manifest
+  D.purchases.push({name:'Vé Xổ Số Vũ Trụ — kỳ #'+ky,amount:LT_PRICE,dateVN:todayVN(),lt:1});
   ltSel=[];
   save(); renderAll(); renderLotto();
   $('lt-status').textContent='Vé của bạn đã sẵn sàng. Bấm quay số nhé!';
@@ -2986,6 +3192,7 @@ idbReady.then(()=>{
     },600);
   }
   loadSet(); renderAll(); schedule();
+  mBatSuKien();   // nối bộ bắt sự kiện cho Siêu thị Vũ Trụ
   // dấu phiên bản: để biết máy đang chạy bản nào khi có gì đó lạ
   try{ $('app-ver').textContent = APP_VER; }catch(e){}
 });
