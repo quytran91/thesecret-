@@ -979,7 +979,7 @@
     <h2>Đặt hàng thành công</h2>
     <p class="ms" id="m-ok-sub" style="margin-top:7px"></p>
     <p class="note" id="m-ok-ma" style="margin-top:9px"></p>
-    <button class="bgold" style="width:100%;margin-top:14px;padding:15px" onclick="hideOvl('ov-mok')">Cảm nhận điều này ✦</button>
+    <button class="bgold" style="width:100%;margin-top:14px;padding:15px" onclick="hideOvl('ov-mok')">Xuống dưới nhà nhận hàng 📦</button>
   </div></div>
 
   <section class="view" id="sub-ledger">
@@ -1537,7 +1537,7 @@ function genTransfer(kind){
   };
 }
 function sentTotal(){ return (D.gives||[]).reduce((s,g)=>s+((g.sent&&!g.priceless)?g.amount:0),0); }
-const APP_VER = '6.10.2';
+const APP_VER = '6.11.0';
 /* Tiền tiêu ở Siêu thị gom vào D.shopChi — KHÔNG đẩy vào D.purchases, để danh sách
    "đã manifest" không bị loãng y như vé xổ số. */
 function bal(){ return D.checks.reduce((s,c)=>s+c.amount,0)+D.transfers.reduce((s,t)=>s+t.amount,0)-D.purchases.reduce((s,p)=>s+p.amount,0)-sentTotal()-(D.shopChi||0); }
@@ -2277,6 +2277,10 @@ function mDatHang(){
     +soMon+' món đang trên đường đến '+esc(dia);
   $('m-ok-ma').textContent='Mã đơn VT'+String(Date.now()).slice(-10);
   hideOvl('ov-mtt'); $('ov-mok').classList.add('show');
+  /* Tin nhắn biến động số dư như một giao dịch thật — dùng lại đúng bộ app vẫn dùng
+     cho chợ và mua nhanh, để giọng điệu thống nhất. */
+  const nhan = gio[0].ten + (gio.length > 1 ? ' và ' + (gio.length - 1) + ' món khác' : '');
+  showSms(tong, true, nhan);
 }
 
 /* Bấm là hỏi thẳng máy chủ xem có bản mới chưa.
